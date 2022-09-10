@@ -41,45 +41,117 @@ class _TopPageState extends State<TopPage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+      body: Stack(
+        children: [
+          Container(
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background.png'),
+                fit: BoxFit.cover,
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+          ),
+          Container(
+            alignment: Alignment.center,
+            decoration: const BoxDecoration(
+              color: Color(0x33000000),
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
+          ),
+          Container(
+            alignment: Alignment.center,
+            child: Column(
+              // Column is also a layout widget. It takes a list of children and
+              // arranges them vertically. By default, it sizes itself to fit its
+              // children horizontally, and tries to be as tall as its parent.
+              //
+              // Invoke "debug painting" (press "p" in the console, choose the
+              // "Toggle Debug Paint" action from the Flutter Inspector in Android
+              // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+              // to see the wireframe for each widget.
+              //
+              // Column has various properties to control how it sizes itself and
+              // how it positions its children. Here we use mainAxisAlignment to
+              // center the children vertically; the main axis here is the vertical
+              // axis because Columns are vertical (the cross axis would be
+              // horizontal).
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                SizedBox(
+                  height: 220,
+                ),
+                const Text(
+                  'Qiita Feed App',
+                  style: TextStyle(
+                    fontFamily: 'Pacifico-Regular',
+                    fontSize: 36,
+                    color: const Color(0xFFFFFFFF),
+                  ),
+                ),
+                const Text('-PlayGround-',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: const Color(0xFFFFFFFF),
+                    )),
+                Spacer(),
+                SizedBox(
+                  width: 327,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF468300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(25),
+                        ),
+                      ),
+                    ),
+                    child: const Text(
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: const Color(0xFFFFFFFF),
+                      ),
+                      "ログイン",
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 34,
+                ),
+                const Text('ログインせずに利用する',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: const Color(0xFFFFFFFF),
+                    )),
+                SizedBox(
+                  height: 81,
+                ),
+              ],
+            ),
+
+            // child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.end,
+            //     children: <Widget>[
+            //   SizedBox(
+            //     height: 130,
+            //   ),
+            //   ElevatedButton(
+            //     onPressed: () {},
+            //     style: ElevatedButton.styleFrom(
+            //       backgroundColor: const Color(0xFF468300),
+            //     ),
+            //     child: const Text(
+            //       style: TextStyle(
+            //         fontSize: 14,
+            //         color: const Color(0xFFFFFFFF),
+            //       ),
+            //       "ログイン",
+            //     ),
+            //   )
+            // ]),
+          ),
+        ],
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
