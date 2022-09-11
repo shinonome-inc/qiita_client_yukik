@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TopPage extends StatefulWidget {
-  const TopPage({super.key, required this.title});
-  final String title;
+  const TopPage({super.key});
 
   @override
   State<TopPage> createState() => _TopPageState();
