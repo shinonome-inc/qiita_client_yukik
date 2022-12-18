@@ -1,83 +1,64 @@
 import 'package:flutter/material.dart';
+import 'package:qiita_client_yukik/models/article.dart';
 
-class TopPage extends StatefulWidget {
-  const TopPage({super.key});
+class FeedPage extends StatefulWidget {
+  const FeedPage({Key? key}) : super(key: key);
 
   @override
-  State<TopPage> createState() => _TopPageState();
+  State<FeedPage> createState() => _FeedPageState();
 }
 
-class _TopPageState extends State<TopPage> {
+class _FeedPageState extends State<FeedPage> {
+  // Future<List<Article>> fetchArticle() async {
+  //   final response = await http
+  //       .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
+  //
+  //   if (response.statusCode == 200) {
+  //     // If the server did return a 200 OK response,
+  //     // then parse the JSON.
+  //     //
+  //     return List<Article>.from(jsonDecode(response.body));
+  //   } else {
+  //     // If the server did not return a 200 OK response,
+  //     // then throw an exception.
+  //     throw Exception('Failed to load album');
+  //   }
+  // }
+
+  // late Future<List<Article>> futureArticle;
+
+  @override
+  // void initState() {
+  //   // super.initState();
+  //   // futureArticle = fetchArticle();
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Container(
-            alignment: Alignment.center,
-            decoration: const BoxDecoration(
-              color: Color(0x33000000),
-            ),
+    return MaterialApp(
+      title: 'Fetch Data Example',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text('Fetch Data Example'),
+        ),
+        body: Center(
+          child: FutureBuilder<List<Article>>(
+            // future: fetchArticle(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Text(snapshot.data!.first.title);
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+
+              // By default, show a loading spinner.
+              return const CircularProgressIndicator();
+            },
           ),
-          Container(
-            alignment: Alignment.center,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                const SizedBox(
-                  height: 55,
-                ),
-                const Text(
-                  'Feed',
-                  style: TextStyle(
-                    fontFamily: 'Pacifico-Regular',
-                    fontSize: 17,
-                    color: Color(0xFF000000),
-                  ),
-                ),
-                const Text('-PlayGround-',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFFFFFFFF),
-                    )),
-                const Spacer(),
-                SizedBox(
-                  width: 327,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF468300),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(25),
-                        ),
-                      ),
-                    ),
-                    child: const Text(
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Color(0xFFFFFFFF),
-                      ),
-                      "ログイン",
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 34,
-                ),
-                const Text('ログインせずに利用する',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFFFFFFFF),
-                    )),
-                const SizedBox(
-                  height: 81,
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
