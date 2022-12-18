@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_client_yukik/root.dart';
+import 'package:qiita_client_yukik/pages/top_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Root(),
+      home: const TopPage(),
     );
   }
 }
