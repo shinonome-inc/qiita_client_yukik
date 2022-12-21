@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qiita_client_yukik/root.dart';
 
 class TopPage extends StatefulWidget {
   const TopPage({super.key});
@@ -75,11 +76,18 @@ class _TopPageState extends State<TopPage> {
                 const SizedBox(
                   height: 34,
                 ),
-                const Text('ログインせずに利用する',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Color(0xFFFFFFFF),
-                    )),
+                TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const Root()));
+                    },
+                    child: const Text('ログインせずに利用する',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Color(0xFFFFFFFF),
+                        ))),
                 const SizedBox(
                   height: 81,
                 ),
