@@ -6,25 +6,33 @@ import 'package:intl/intl.dart';
 
 class Article {
   final String title;
-  final DateTime updatedAt;
+  final DateTime createdAt;
   final User users;
-  Article({required this.title, required this.updatedAt, required this.users});
+  final int likes;
+  Article(
+      {required this.title,
+      required this.createdAt,
+      required this.users,
+      required this.likes});
 
   factory Article.fromJson(Map<String, dynamic> json) {
     return Article(
       title: json['title'],
-      updatedAt: DateTime.parse(json['updated_at']),
+      createdAt: DateTime.parse(json['created_at']),
       users: User.fromJson(json['user']),
+      likes: json['likes_count'],
     );
   }
 }
 
 class User {
   final String imgUrl;
-  User({required this.imgUrl});
+  final String userId;
+  User({required this.imgUrl, required this.userId});
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
       imgUrl: json['profile_image_url'],
+      userId: json['id'],
     );
   }
 }
@@ -65,11 +73,21 @@ class _FeedPageState extends State<FeedPage> {
         itemBuilder: (context, index) {
           return Card(
             child: ListTile(
-              leading: Image.network(items[index].users.imgUrl),
-              title: Text(items[index].title),
-              subtitle: Text(
-                  '投稿日：${DateFormat('yyyy/MM/dd').format(items[index].updatedAt)}'),
-            ),
+                leading: CircleAvatar(
+                  backgroundImage: NetworkImage(items[index].users.imgUrl),
+                  radius: 20,
+                ),
+                title: Text(
+                  items[index].title,
+                  style: const TextStyle(fontSize: 14),
+                ),
+                subtitle: Text(
+                    '@${items[index].users.userId.toString()}'
+                    '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                    '　いいね：${items[index].likes.toString()}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                    ))),
           );
         },
       ),
