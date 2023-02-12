@@ -1,41 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-
-class Article {
-  final String title;
-  final DateTime createdAt;
-  final User users;
-  final int likes;
-  Article(
-      {required this.title,
-      required this.createdAt,
-      required this.users,
-      required this.likes});
-
-  factory Article.fromJson(Map<String, dynamic> json) {
-    return Article(
-      title: json['title'],
-      createdAt: DateTime.parse(json['created_at']),
-      users: User.fromJson(json['user']),
-      likes: json['likes_count'],
-    );
-  }
-}
-
-class User {
-  final String imgUrl;
-  final String userId;
-  User({required this.imgUrl, required this.userId});
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      imgUrl: json['profile_image_url'],
-      userId: json['id'],
-    );
-  }
-}
+import 'package:qiita_client_yukik/models/article.dart';
+import 'package:qiita_client_yukik/models/fetch.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -44,26 +10,12 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  Future<List<Article>> fetchArticle() async {
-    final response =
-        await http.get(Uri.parse('https://qiita.com/api/v2/items'));
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonArray = json.decode(response.body);
-      final items = jsonArray.map((item) {
-        return Article.fromJson(item);
-      }).toList();
-      return items;
-    } else {
-      throw Exception('Failed to load album');
-    }
-  }
-
   late Future<List<Article>> futureArticle;
 
   @override
   void initState() {
     super.initState();
-    futureArticle = fetchArticle();
+    futureArticle = API().fetchArticle('https://qiita.com/api/v2/items');
   }
 
   Widget _listView(List<Article> items) {
@@ -71,23 +23,45 @@ class _FeedPageState extends State<FeedPage> {
       child: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
-          return Card(
-            child: ListTile(
-                leading: CircleAvatar(
-                  backgroundImage: NetworkImage(items[index].users.imgUrl),
-                  radius: 20,
-                ),
-                title: Text(
-                  items[index].title,
-                  style: const TextStyle(fontSize: 14),
-                ),
-                subtitle: Text(
-                    '@${items[index].users.userId.toString()}'
-                    '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                    '　いいね：${items[index].likes.toString()}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                    ))),
+          return Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(items[index].users.imgUrl),
+                    radius: 20,
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          items[index].title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '@${items[index].users.userId.toString()}'
+                          '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                          '　いいね：${items[index].likes.toString()}',
+                          style: const TextStyle(
+                              fontSize: 12, color: Color(0xFF828282)),
+                        ),
+                        const Divider(height: 16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),
@@ -110,9 +84,15 @@ class _FeedPageState extends State<FeedPage> {
       ),
       body: Column(
         children: [
-          const Divider(),
+          const Divider(height: 0.5),
+          SizedBox(
+            height: 8,
+            child: Container(
+              color: Colors.white,
+            ),
+          ),
           FutureBuilder<List<Article>>(
-            future: fetchArticle(),
+            future: API().fetchArticle('https://qiita.com/api/v2/items'),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 return _listView(snapshot.data!);
