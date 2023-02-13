@@ -1,16 +1,11 @@
 class User {
-  final String id;
-  final String profileImageUrl;
-
-  const User({
-    required this.id,
-    required this.profileImageUrl,
-  });
-
+  final String imgUrl;
+  final String userId;
+  User({required this.imgUrl, required this.userId});
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      profileImageUrl: json['profile_image_url'],
+      imgUrl: json['profile_image_url'],
+      userId: json['id'],
     );
   }
 }

@@ -1,64 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
+import 'package:qiita_client_yukik/models/fetch.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
-
   @override
   State<FeedPage> createState() => _FeedPageState();
 }
 
 class _FeedPageState extends State<FeedPage> {
-  // Future<List<Article>> fetchArticle() async {
-  //   final response = await http
-  //       .get(Uri.parse('https://jsonplaceholder.typicode.com/albums/1'));
-  //
-  //   if (response.statusCode == 200) {
-  //     // If the server did return a 200 OK response,
-  //     // then parse the JSON.
-  //     //
-  //     return List<Article>.from(jsonDecode(response.body));
-  //   } else {
-  //     // If the server did not return a 200 OK response,
-  //     // then throw an exception.
-  //     throw Exception('Failed to load album');
-  //   }
-  // }
-
-  // late Future<List<Article>> futureArticle;
+  late Future<List<Article>> futureArticle;
 
   @override
-  // void initState() {
-  //   // super.initState();
-  //   // futureArticle = fetchArticle();
-  // }
+  void initState() {
+    super.initState();
+    futureArticle = API().fetchArticle('https://qiita.com/api/v2/items');
+  }
+
+  Widget _listView(List<Article> items) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          return Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(items[index].users.imgUrl),
+                    radius: 20,
+                  ),
+                  const SizedBox(
+                    width: 8,
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          items[index].title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '@${items[index].users.userId.toString()}'
+                          '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                          '　いいね：${items[index].likes.toString()}',
+                          style: const TextStyle(
+                              fontSize: 12, color: Color(0xFF828282)),
+                        ),
+                        const Divider(height: 16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Fetch Data Example',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Feed',
+            style: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Pacifico-Regular',
+              fontSize: 17,
+            )),
+        centerTitle: true,
+        backgroundColor: Colors.white,
+        elevation: 0,
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Fetch Data Example'),
-        ),
-        body: Center(
-          child: FutureBuilder<List<Article>>(
-            // future: fetchArticle(),
+      body: Column(
+        children: [
+          const Divider(height: 0.5),
+          SizedBox(
+            height: 8,
+            child: Container(
+              color: Colors.white,
+            ),
+          ),
+          FutureBuilder<List<Article>>(
+            future: API().fetchArticle('https://qiita.com/api/v2/items'),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Text(snapshot.data!.first.title);
+                return _listView(snapshot.data!);
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
-
-              // By default, show a loading spinner.
-              return const CircularProgressIndicator();
+              return const Center(child: CircularProgressIndicator());
             },
           ),
-        ),
+        ],
       ),
     );
   }
