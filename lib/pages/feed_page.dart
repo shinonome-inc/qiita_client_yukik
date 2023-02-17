@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
 import 'package:qiita_client_yukik/models/fetch.dart';
+import 'package:qiita_client_yukik/pages/feed_detail.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -23,8 +24,22 @@ class _FeedPageState extends State<FeedPage> {
       child: ListView.builder(
         itemCount: items.length,
         itemBuilder: (context, index) {
-          return Container(
-            color: Colors.white,
+          return ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              elevation: MaterialStateProperty.all(0),
+            ),
+            onPressed: () {
+              showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return SizedBox(
+                        // height: double.parse(WebViewController().runJavaScriptReturningResult('document.documentElement.scrollHeight;').toString()) ?? MediaQuery.of(context).size.height * 0.9,
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: FeedDetail(url: items[index].webUrl));
+                  });
+            },
             child: Padding(
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
               child: Row(
@@ -44,6 +59,7 @@ class _FeedPageState extends State<FeedPage> {
                           items[index].title,
                           style: const TextStyle(
                             fontSize: 14,
+                            color: Colors.black,
                           ),
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
