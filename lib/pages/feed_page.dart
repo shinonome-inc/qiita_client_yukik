@@ -35,8 +35,9 @@ class _FeedPageState extends State<FeedPage> {
                   context: context,
                   builder: (BuildContext context) {
                     return SizedBox(
-                        height: 730,
-                        child: WebViewPage(url: items[index].webUrl));
+                        // height: double.parse(WebViewController().runJavaScriptReturningResult('document.documentElement.scrollHeight;').toString()) ?? MediaQuery.of(context).size.height * 0.9,
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: FeedDetail(url: items[index].webUrl));
                   });
             },
             child: Padding(

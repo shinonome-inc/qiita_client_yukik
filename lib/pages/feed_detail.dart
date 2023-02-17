@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-class WebViewPage extends StatefulWidget {
-  const WebViewPage({Key? key, required this.url}) : super(key: key);
+class FeedDetail extends StatefulWidget {
+  const FeedDetail({Key? key, required this.url}) : super(key: key);
   final String url;
 
   @override
-  State<WebViewPage> createState() => _WebViewPageState();
+  State<FeedDetail> createState() => _FeedDetailState();
 }
 
-class _WebViewPageState extends State<WebViewPage> {
+class _FeedDetailState extends State<FeedDetail> {
   late WebViewController controller;
   double? pageHeight;
 
