@@ -19,7 +19,7 @@ class _FeedPageState extends State<FeedPage> {
   @override
   void initState() {
     super.initState();
-    futureArticle = API().fetchArticle('https://qiita.com/api/v2/items');
+    futureArticle = API().fetchArticle();
   }
 
   Widget _listView(List<Article> items) {
@@ -155,7 +155,7 @@ class _FeedPageState extends State<FeedPage> {
           Container(
             color: Colors.white,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               child: _textField(),
             ),
           ),
@@ -167,8 +167,7 @@ class _FeedPageState extends State<FeedPage> {
             ),
           ),
           FutureBuilder<List<Article>>(
-            future: API().fetchArticle(
-                'https://qiita.com/api/v2/items?page=1&per_page=20&query=body%3A$onFieldSubmittedText+title%3A$onFieldSubmittedText'),
+            future: API().fetchArticle(searchText: onFieldSubmittedText),
             builder: (context, snapshot) {
               if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 return _listView(snapshot.data!);
@@ -198,7 +197,6 @@ class _FeedPageState extends State<FeedPage> {
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
-
               return const Center(child: CircularProgressIndicator());
             },
           ),
