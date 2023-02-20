@@ -5,8 +5,14 @@ import 'package:http/http.dart' as http;
 import 'article.dart';
 
 class API {
-  Future<List<Article>> fetchArticle(String string) async {
-    final response = await http.get(Uri.parse(string));
+  final baseUrl = 'https://qiita.com/api/v2/items';
+  Future<List<Article>> fetchArticle({String? searchText}) async {
+    var url = baseUrl;
+    if (searchText != null) {
+      url =
+          '$baseUrl?page=1&per_page=20&query=body%3A$searchText+title%3A$searchText';
+    }
+    final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
       final List<dynamic> jsonArray = json.decode(response.body);
       final items = jsonArray.map((item) {

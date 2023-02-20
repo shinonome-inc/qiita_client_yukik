@@ -12,11 +12,14 @@ class FeedPage extends StatefulWidget {
 
 class _FeedPageState extends State<FeedPage> {
   late Future<List<Article>> futureArticle;
+  String onChangedText = '';
+  String onFieldSubmittedText = '';
+  final textController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    futureArticle = API().fetchArticle('https://qiita.com/api/v2/items');
+    futureArticle = API().fetchArticle();
   }
 
   Widget _listView(List<Article> items) {
@@ -34,8 +37,12 @@ class _FeedPageState extends State<FeedPage> {
                   isScrollControlled: true,
                   context: context,
                   builder: (BuildContext context) {
-                    return SizedBox(
-                        // height: double.parse(WebViewController().runJavaScriptReturningResult('document.documentElement.scrollHeight;').toString()) ?? MediaQuery.of(context).size.height * 0.9,
+                    return Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        )),
                         height: MediaQuery.of(context).size.height * 0.9,
                         child: FeedDetail(url: items[index].webUrl));
                   });
@@ -84,6 +91,51 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
+  Widget _textField() {
+    return TextFormField(
+      autocorrect: true,
+      controller: textController,
+      decoration: InputDecoration(
+        hintText: 'Search',
+        prefixIcon: Icon(Icons.search),
+        isDense: true,
+        contentPadding: EdgeInsets.fromLTRB(10, 12, 12, 10),
+        hintStyle: TextStyle(
+          color: Color(0x993C3C43),
+          fontSize: 17,
+        ),
+        filled: true,
+        fillColor: Color(0x1F767680),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Color(0x1F767680), width: 0),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Color(0x1F767680), width: 0),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Color(0x1F767680), width: 0),
+        ),
+      ),
+      // フィールドのテキストが変更される度に呼び出される
+      onChanged: (value) {
+        print('onChanged: $value');
+        setState(() {
+          onChangedText = value;
+        });
+      },
+      // ユーザーがフィールドのテキストの編集が完了したことを示したときに呼び出される
+      onFieldSubmitted: (value) {
+        print('onFieldSubmitted: $value');
+        setState(() {
+          onFieldSubmittedText = value;
+        });
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,6 +152,13 @@ class _FeedPageState extends State<FeedPage> {
       ),
       body: Column(
         children: [
+          Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: _textField(),
+            ),
+          ),
           const Divider(height: 0.5),
           SizedBox(
             height: 8,
@@ -108,10 +167,33 @@ class _FeedPageState extends State<FeedPage> {
             ),
           ),
           FutureBuilder<List<Article>>(
-            future: API().fetchArticle('https://qiita.com/api/v2/items'),
+            future: API().fetchArticle(searchText: onFieldSubmittedText),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
                 return _listView(snapshot.data!);
+              } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                return SizedBox(
+                  height: MediaQuery.of(context).size.height / 3,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        Text(
+                          '検索にマッチする記事はありませんでした',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                        SizedBox(height: 17),
+                        Text(
+                          '検索条件を変えるなどして再度検索をしてください',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Color(0xFF828282),
+                          ),
+                        )
+                      ]),
+                );
               } else if (snapshot.hasError) {
                 return Text('${snapshot.error}');
               }
