@@ -15,17 +15,40 @@ class _FeedPageState extends State<FeedPage> {
   String onChangedText = '';
   String onFieldSubmittedText = '';
   final textController = TextEditingController();
+  var _isLoading = true;
+  ScrollController? _scrollController;
 
   @override
   void initState() {
-    super.initState();
+    _scrollController = ScrollController();
+    _scrollController!.addListener(_scrollListener);
     futureArticle = API().fetchArticle();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController!.dispose();
+    super.dispose();
+  }
+
+  void _scrollListener() async {
+    double positionRate =
+        _scrollController!.offset / _scrollController!.position.maxScrollExtent;
+    const threshold = 0.9;
+    if (positionRate > threshold && !_isLoading) {
+      setState(() {
+        _isLoading = true;
+      });
+      await API().fetchArticle();
+    }
   }
 
   Widget _listView(List<Article> items) {
     return Expanded(
       child: ListView.builder(
-        itemCount: items.length,
+        controller: _scrollController,
+        itemCount: _isLoading ? items.length + 1 : items.length,
         itemBuilder: (context, index) {
           return ElevatedButton(
             style: ButtonStyle(
@@ -121,14 +144,12 @@ class _FeedPageState extends State<FeedPage> {
       ),
       // フィールドのテキストが変更される度に呼び出される
       onChanged: (value) {
-        print('onChanged: $value');
         setState(() {
           onChangedText = value;
         });
       },
       // ユーザーがフィールドのテキストの編集が完了したことを示したときに呼び出される
       onFieldSubmitted: (value) {
-        print('onFieldSubmitted: $value');
         setState(() {
           onFieldSubmittedText = value;
         });
@@ -136,72 +157,97 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
+  Widget _emptyView() {
+    return Center(
+      child: Text('データが存在しませんでした'),
+    );
+  }
+
+  Widget _loadingView() {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(
+              height: 8,
+            ),
+            Text('通信中...'),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Feed',
-            style: TextStyle(
-              color: Colors.black,
-              fontFamily: 'Pacifico-Regular',
-              fontSize: 17,
-            )),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: Column(
-        children: [
-          Container(
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: _textField(),
-            ),
-          ),
-          const Divider(height: 0.5),
-          SizedBox(
-            height: 8,
-            child: Container(
+        appBar: AppBar(
+          title: const Text('Feed',
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Pacifico-Regular',
+                fontSize: 17,
+              )),
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          elevation: 0,
+        ),
+        body: Column(
+          children: [
+            Container(
               color: Colors.white,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                child: _textField(),
+              ),
             ),
-          ),
-          FutureBuilder<List<Article>>(
-            future: API().fetchArticle(searchText: onFieldSubmittedText),
-            builder: (context, snapshot) {
-              if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                return _listView(snapshot.data!);
-              } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                return SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        Text(
-                          '検索にマッチする記事はありませんでした',
-                          style: TextStyle(
-                            fontSize: 14,
+            const Divider(height: 0.5),
+            SizedBox(
+              height: 8,
+              child: Container(
+                color: Colors.white,
+              ),
+            ),
+            FutureBuilder<List<Article>>(
+              future:
+                  API().fetchArticle(searchText: onFieldSubmittedText, page: 1),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  return _listView(snapshot.data!);
+                } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+                  return SizedBox(
+                    height: MediaQuery.of(context).size.height / 3,
+                    child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: const [
+                          Text(
+                            '検索にマッチする記事はありませんでした',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                        SizedBox(height: 17),
-                        Text(
-                          '検索条件を変えるなどして再度検索をしてください',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xFF828282),
-                          ),
-                        )
-                      ]),
-                );
-              } else if (snapshot.hasError) {
-                return Text('${snapshot.error}');
-              }
-              return const Center(child: CircularProgressIndicator());
-            },
-          ),
-        ],
-      ),
-    );
+                          SizedBox(height: 17),
+                          Text(
+                            '検索条件を変えるなどして再度検索をしてください',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xFF828282),
+                            ),
+                          )
+                        ]),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('${snapshot.error}');
+                }
+                return const Center(child: CircularProgressIndicator());
+              },
+            ),
+          ],
+        ));
   }
 }

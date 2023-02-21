@@ -6,11 +6,11 @@ import 'article.dart';
 
 class API {
   final baseUrl = 'https://qiita.com/api/v2/items';
-  Future<List<Article>> fetchArticle({String? searchText}) async {
+  Future<List<Article>> fetchArticle({String? searchText, int? page}) async {
     var url = baseUrl;
     if (searchText != null) {
       url =
-          '$baseUrl?page=1&per_page=20&query=body%3A$searchText+title%3A$searchText';
+          '$baseUrl?page=$page&per_page=20&query=body%3A$searchText+title%3A$searchText';
     }
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) {
