@@ -6,8 +6,12 @@ import 'article.dart';
 
 class API {
   final baseUrl = 'https://qiita.com/api/v2/items';
+
   Future<List<Article>> fetchArticle({String? searchText, int? page}) async {
     var url = baseUrl;
+    print('通信中');
+    // print('PageCount: $_pageNumbers');
+
     if (searchText != null) {
       url =
           '$baseUrl?page=$page&per_page=20&query=body%3A$searchText+title%3A$searchText';

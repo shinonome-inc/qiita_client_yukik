@@ -16,7 +16,9 @@ class _FeedPageState extends State<FeedPage> {
   String onFieldSubmittedText = '';
   final textController = TextEditingController();
   var _isLoading = true;
+  var _pageNumbers = 0;
   ScrollController? _scrollController;
+  final List<Article> _fetchedArticles = [];
 
   @override
   void initState() {
@@ -40,16 +42,21 @@ class _FeedPageState extends State<FeedPage> {
       setState(() {
         _isLoading = true;
       });
-      await API().fetchArticle();
+      futureArticle = API()
+          .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
     }
   }
 
   Widget _listView(List<Article> items) {
+    print('表示件数： ${items.length}');
     return Expanded(
       child: ListView.builder(
         controller: _scrollController,
         itemCount: _isLoading ? items.length + 1 : items.length,
         itemBuilder: (context, index) {
+          if (index == items.length) {
+            return _loadingView();
+          }
           return ElevatedButton(
             style: ButtonStyle(
               backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
@@ -120,26 +127,26 @@ class _FeedPageState extends State<FeedPage> {
       controller: textController,
       decoration: InputDecoration(
         hintText: 'Search',
-        prefixIcon: Icon(Icons.search),
+        prefixIcon: const Icon(Icons.search),
         isDense: true,
-        contentPadding: EdgeInsets.fromLTRB(10, 12, 12, 10),
-        hintStyle: TextStyle(
+        contentPadding: const EdgeInsets.fromLTRB(10, 12, 12, 10),
+        hintStyle: const TextStyle(
           color: Color(0x993C3C43),
           fontSize: 17,
         ),
         filled: true,
-        fillColor: Color(0x1F767680),
+        fillColor: const Color(0x1F767680),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Color(0x1F767680), width: 0),
+          borderSide: const BorderSide(color: Color(0x1F767680), width: 0),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Color(0x1F767680), width: 0),
+          borderSide: const BorderSide(color: Color(0x1F767680), width: 0),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Color(0x1F767680), width: 0),
+          borderSide: const BorderSide(color: Color(0x1F767680), width: 0),
         ),
       ),
       // フィールドのテキストが変更される度に呼び出される
@@ -157,24 +164,19 @@ class _FeedPageState extends State<FeedPage> {
     );
   }
 
-  Widget _emptyView() {
-    return Center(
-      child: Text('データが存在しませんでした'),
-    );
-  }
-
   Widget _loadingView() {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(),
+          children: const [
+            CircularProgressIndicator(
+              color: Colors.grey,
+            ),
             SizedBox(
               height: 8,
             ),
-            Text('通信中...'),
           ],
         ),
       ),
@@ -213,11 +215,17 @@ class _FeedPageState extends State<FeedPage> {
               ),
             ),
             FutureBuilder<List<Article>>(
-              future:
-                  API().fetchArticle(searchText: onFieldSubmittedText, page: 1),
+              future: futureArticle,
               builder: (context, snapshot) {
+                print(snapshot.connectionState);
+                if (snapshot.connectionState == ConnectionState.done) {
+                  print('通信完了');
+                  _isLoading = false;
+                  _pageNumbers += 1;
+                  _fetchedArticles.addAll(snapshot.data!);
+                }
                 if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  return _listView(snapshot.data!);
+                  return _listView(_fetchedArticles);
                 } else if (snapshot.hasData && snapshot.data!.isEmpty) {
                   return SizedBox(
                     height: MediaQuery.of(context).size.height / 3,
