@@ -159,6 +159,9 @@ class _FeedPageState extends State<FeedPage> {
       onFieldSubmitted: (value) {
         setState(() {
           onFieldSubmittedText = value;
+          _fetchedArticles.clear();
+          _isLoading = true;
+          _pageNumbers = 0;
         });
       },
     );
@@ -218,7 +221,8 @@ class _FeedPageState extends State<FeedPage> {
               future: futureArticle,
               builder: (context, snapshot) {
                 print(snapshot.connectionState);
-                if (snapshot.connectionState == ConnectionState.done) {
+                if (snapshot.connectionState == ConnectionState.done &&
+                    _isLoading) {
                   print('通信完了');
                   _isLoading = false;
                   _pageNumbers += 1;
