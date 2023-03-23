@@ -174,7 +174,7 @@ class _FeedPageState extends State<FeedPage> {
           onFieldSubmittedText = value;
           _fetchedArticles.clear();
           _isLoading = true;
-          _pageNumbers = 0;
+          _pageNumbers = 1;
         });
         futureArticle = API()
             .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
