@@ -18,32 +18,45 @@ class _FeedPageState extends State<FeedPage> {
   var _isLoading = true;
   var _pageNumbers = 0;
   ScrollController? _scrollController;
-  final List<Article> _fetchedArticles = [];
+  List<Article> _fetchedArticles = [];
 
   @override
   void initState() {
     _scrollController = ScrollController();
-    _scrollController!.addListener(_scrollListener);
     futureArticle = API().fetchArticle();
+    _scrollController!.addListener(_scrollListener);
     super.initState();
   }
 
   @override
   void dispose() {
-    _scrollController!.dispose();
+    _scrollController?.dispose();
     super.dispose();
   }
 
   void _scrollListener() async {
-    double positionRate =
-        _scrollController!.offset / _scrollController!.position.maxScrollExtent;
-    const threshold = 0.9;
-    if (positionRate > threshold && !_isLoading) {
-      setState(() {
-        _isLoading = true;
-      });
-      futureArticle = API()
-          .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
+    if (_scrollController != null) {
+      double positionRate = _scrollController!.offset /
+          _scrollController!.position.maxScrollExtent;
+      const threshold = 0.9;
+      if (positionRate > threshold && !_isLoading) {
+        setState(() {
+          _isLoading = true;
+        });
+        try {
+          final newArticles = await API().fetchArticle(
+              searchText: onFieldSubmittedText, page: _pageNumbers);
+          setState(() {
+            _fetchedArticles.addAll(newArticles);
+            _pageNumbers++;
+            _isLoading = false;
+          });
+        } catch (e) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
     }
   }
 
@@ -163,6 +176,8 @@ class _FeedPageState extends State<FeedPage> {
           _isLoading = true;
           _pageNumbers = 0;
         });
+        futureArticle = API()
+            .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
       },
     );
   }
