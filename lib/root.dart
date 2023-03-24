@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:qiita_client_yukik/pages/feed_page.dart';
+import 'package:qiita_client_yukik/pages/tag_page.dart';
 
 class Root extends StatefulWidget {
   const Root({super.key});
@@ -9,12 +11,8 @@ class Root extends StatefulWidget {
 
 class _RootState extends State<Root> {
   static const _screens = [
-    Center(
-      child: Text('feed'),
-    ),
-    Center(
-      child: Text('tag'),
-    ),
+    FeedPage(),
+    TagPage(),
     Center(
       child: Text('mypage'),
     ),
