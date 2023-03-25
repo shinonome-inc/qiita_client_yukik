@@ -10,15 +10,16 @@ class TagPage extends StatefulWidget {
 
 class _TagPageState extends State<TagPage> {
   late Future<List<Tag>> futureTag;
-  var _isLoading = true;
-  var _pageNumbers = 1;
+  var _isLoading = false;
+  var _pageNumbers = 0;
+  var hasError = false;
   ScrollController? _scrollController;
   final List<Tag> _fetchedTags = [];
 
   @override
   void initState() {
     _scrollController = ScrollController();
-    futureTag = ApiTag().fetchTag(page: _pageNumbers);
+    fetchFunction();
     _scrollController!.addListener(_scrollListener);
     super.initState();
   }
@@ -35,23 +36,22 @@ class _TagPageState extends State<TagPage> {
           _scrollController!.position.maxScrollExtent;
       const threshold = 0.9;
       if (positionRate > threshold && !_isLoading) {
-        setState(() {
-          _isLoading = true;
-        });
-        try {
-          print(_pageNumbers);
-          final newTags = await ApiTag().fetchTag(page: _pageNumbers);
-          setState(() {
-            _fetchedTags.addAll(newTags);
-            _pageNumbers++;
-            _isLoading = false;
-          });
-        } catch (e) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        fetchFunction();
       }
+    }
+  }
+
+  void fetchFunction() async {
+    if (!_isLoading) {
+      setState(() {
+        _isLoading = true;
+        _pageNumbers++;
+      });
+      final newArticles = await ApiTag().fetchTag(page: _pageNumbers);
+      setState(() {
+        _fetchedTags.addAll(newArticles);
+        _isLoading = false;
+      });
     }
   }
 
@@ -75,15 +75,17 @@ class _TagPageState extends State<TagPage> {
   }
 
   Widget _listTag(List<Tag> tags) {
+    if (tags.isEmpty) {
+      return const SizedBox.shrink();
+    }
     return Expanded(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
         child: GridView.builder(
           controller: _scrollController,
-          itemCount: _isLoading ? tags.length + 1 : tags.length,
+          itemCount: tags.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount:
-                  (MediaQuery.of(context).size.width / 154).toInt()),
+              crossAxisCount: MediaQuery.of(context).size.width ~/ 154),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {},
@@ -156,25 +158,14 @@ class _TagPageState extends State<TagPage> {
             const SizedBox(
               height: 8,
             ),
-            FutureBuilder<List<Tag>>(
-              future: futureTag,
-              builder: (context, snapshot) {
-                print(snapshot.connectionState);
-                if (snapshot.connectionState == ConnectionState.done &&
-                    _isLoading) {
-                  print('通信完了');
-                  _isLoading = false;
-                }
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  _pageNumbers++;
-                  _fetchedTags.addAll(snapshot.data!);
-                  return _listTag(_fetchedTags);
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                return _loadingView();
-              },
-            ),
+            Expanded(
+              child: Center(
+                  child: hasError
+                      ? const Text('error')
+                      : _isLoading && _pageNumbers == 1
+                          ? _loadingView()
+                          : _listTag(_fetchedTags)),
+            )
           ],
         ));
   }
