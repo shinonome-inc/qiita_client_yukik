@@ -42,13 +42,14 @@ class _FeedPageState extends State<FeedPage> {
       if (positionRate > threshold && !_isLoading) {
         setState(() {
           _isLoading = true;
+          _pageNumbers++;
         });
         try {
+          print('fetch $_pageNumbers');
           final newArticles = await ApiArticle().fetchArticle(
               searchText: onFieldSubmittedText, page: _pageNumbers);
           setState(() {
             _fetchedArticles.addAll(newArticles);
-            _pageNumbers++;
             _isLoading = false;
           });
         } catch (e) {
@@ -233,6 +234,7 @@ class _FeedPageState extends State<FeedPage> {
               ),
             ),
             FutureBuilder<List<Article>>(
+              key: ValueKey('https://qiita.com/api/v2/tags'),
               future: futureArticle,
               builder: (context, snapshot) {
                 print(snapshot.connectionState);
@@ -240,7 +242,6 @@ class _FeedPageState extends State<FeedPage> {
                     _isLoading) {
                   print('通信完了');
                   _isLoading = false;
-                  _pageNumbers += 1;
                   _fetchedArticles.addAll(snapshot.data!);
                 }
                 if (snapshot.hasData && snapshot.data!.isNotEmpty) {

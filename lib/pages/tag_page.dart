@@ -12,14 +12,15 @@ class _TagPageState extends State<TagPage> {
   late Future<List<Tag>> futureTag;
   var _isLoading = true;
   var _pageNumbers = 1;
-  int pageWidth = 2;
   ScrollController? _scrollController;
   final List<Tag> _fetchedTags = [];
 
   @override
   void initState() {
-    super.initState();
+    _scrollController = ScrollController();
     futureTag = ApiTag().fetchTag(page: _pageNumbers);
+    _scrollController!.addListener(_scrollListener);
+    super.initState();
   }
 
   @override
@@ -38,9 +39,10 @@ class _TagPageState extends State<TagPage> {
           _isLoading = true;
         });
         try {
-          final newArticles = await ApiTag().fetchTag(page: _pageNumbers);
+          print(_pageNumbers);
+          final newTags = await ApiTag().fetchTag(page: _pageNumbers);
           setState(() {
-            _fetchedTags.addAll(newArticles);
+            _fetchedTags.addAll(newTags);
             _pageNumbers++;
             _isLoading = false;
           });
@@ -77,10 +79,11 @@ class _TagPageState extends State<TagPage> {
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
         child: GridView.builder(
-          itemCount: tags.length,
+          controller: _scrollController,
+          itemCount: _isLoading ? tags.length + 1 : tags.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount:
-                  (MediaQuery.of(context).size.width / (138 + 16)).toInt()),
+                  (MediaQuery.of(context).size.width / 154).toInt()),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
               onTap: () {},
@@ -114,7 +117,7 @@ class _TagPageState extends State<TagPage> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      '投稿件数：${tags[index].itemsCount.toString()}',
+                      '投稿件数：${tags[index].itemsCount}',
                       style: const TextStyle(
                           fontSize: 12, color: Color(0xFF828282)),
                     ),
@@ -150,11 +153,8 @@ class _TagPageState extends State<TagPage> {
         body: Column(
           children: [
             const Divider(height: 0.5),
-            SizedBox(
+            const SizedBox(
               height: 8,
-              child: Container(
-                color: Colors.white,
-              ),
             ),
             FutureBuilder<List<Tag>>(
               future: futureTag,
@@ -166,32 +166,9 @@ class _TagPageState extends State<TagPage> {
                   _isLoading = false;
                 }
                 if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  _pageNumbers += 1;
+                  _pageNumbers++;
                   _fetchedTags.addAll(snapshot.data!);
                   return _listTag(_fetchedTags);
-                } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Text(
-                            '検索にマッチする記事はありませんでした',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(height: 17),
-                          Text(
-                            '検索条件を変えるなどして再度検索をしてください',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF828282),
-                            ),
-                          )
-                        ]),
-                  );
                 } else if (snapshot.hasError) {
                   return Text('${snapshot.error}');
                 }

@@ -11,7 +11,12 @@ class ApiTag {
     print('通信中');
     url = '$baseUrl?page=$page&per_page=20&sort=count';
     print(url);
-    final response = await http.get(Uri.parse(url));
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer f7cbc007e8b546e5169c6aaf4a5f41df1a950668'
+      },
+    );
     if (response.statusCode == 200) {
       final List<dynamic> jsonArray = json.decode(response.body);
       final tags = jsonArray.map((tag) {
