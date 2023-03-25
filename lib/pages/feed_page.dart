@@ -16,7 +16,7 @@ class _FeedPageState extends State<FeedPage> {
   final textController = TextEditingController();
   var _isLoading = false;
   var hasError = false;
-  var isEmpty = false;
+  var _isEmpty = false;
   var _pageNumbers = 0;
   ScrollController? _scrollController;
   final List<Article> _fetchedArticles = [];
@@ -46,9 +46,10 @@ class _FeedPageState extends State<FeedPage> {
     }
   }
 
-  void fetchFunction() async {
+  Future<void> fetchFunction() async {
     if (!_isLoading) {
       setState(() {
+        _isEmpty = false;
         _isLoading = true;
         _pageNumbers++;
       });
@@ -59,6 +60,7 @@ class _FeedPageState extends State<FeedPage> {
         _isLoading = false;
       });
     }
+    print(_isEmpty);
   }
 
   Widget _listView(List<Article> items) {
@@ -169,13 +171,19 @@ class _FeedPageState extends State<FeedPage> {
         });
       },
       // ユーザーがフィールドのテキストの編集が完了したことを示したときに呼び出される
-      onFieldSubmitted: (value) {
+      onFieldSubmitted: (value) async {
         setState(() {
           onFieldSubmittedText = value;
           _fetchedArticles.clear();
           _pageNumbers = 1;
+          _isEmpty = false;
         });
-        fetchFunction();
+        await fetchFunction();
+        if (_fetchedArticles.isEmpty) {
+          setState(() {
+            _isEmpty = true;
+          });
+        }
       },
     );
   }
@@ -248,7 +256,7 @@ class _FeedPageState extends State<FeedPage> {
               child: Center(
                   child: hasError
                       ? const Text('error')
-                      : isEmpty
+                      : _isEmpty
                           ? _emptyView()
                           : _isLoading && _pageNumbers == 1
                               ? _loadingView()
