@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/models/fetchTag.dart';
 import 'package:qiita_client_yukik/models/tag.dart';
+import 'package:qiita_client_yukik/pages/tag_detail.dart';
 
 class TagPage extends StatefulWidget {
   const TagPage({Key? key}) : super(key: key);
@@ -47,9 +48,9 @@ class _TagPageState extends State<TagPage> {
         _isLoading = true;
         _pageNumbers++;
       });
-      final newArticles = await ApiTag().fetchTag(page: _pageNumbers);
+      final newTags = await ApiTag().fetchTag(page: _pageNumbers);
       setState(() {
-        _fetchedTags.addAll(newArticles);
+        _fetchedTags.addAll(newTags);
         _isLoading = false;
       });
     }
@@ -85,10 +86,16 @@ class _TagPageState extends State<TagPage> {
           controller: _scrollController,
           itemCount: tags.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: MediaQuery.of(context).size.width ~/ 154),
+              crossAxisCount: MediaQuery.of(context).size.width ~/ 178),
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              onTap: () {},
+              onTap: () {
+                String tagName = tags[index].tagId;
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TagDetail(tagName: tagName)));
+              },
               child: Container(
                 height: 138,
                 width: 162,
