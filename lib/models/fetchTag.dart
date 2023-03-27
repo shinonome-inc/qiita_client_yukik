@@ -8,9 +8,7 @@ class ApiTag {
 
   Future<List<Tag>> fetchTag({required int page}) async {
     var url = baseUrl;
-    print('通信中');
     url = '$baseUrl?page=$page&per_page=20&sort=count';
-    print(url);
     final response = await http.get(
       Uri.parse(url),
       headers: {
