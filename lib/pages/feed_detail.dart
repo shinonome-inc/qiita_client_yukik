@@ -17,7 +17,6 @@ class _FeedDetailState extends State<FeedDetail> {
     const String javaScript = 'document.documentElement.scrollHeight;';
     final result = await controller.runJavaScriptReturningResult(javaScript);
     setState(() {
-      print('UPDATE WebView contents height: $result');
       pageHeight = double.parse(result.toString());
     });
   }
@@ -51,7 +50,7 @@ class _FeedDetailState extends State<FeedDetail> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: pageHeight ?? MediaQuery.of(context).size.height * 0.9,
           child: WebViewWidget(
             controller: controller,

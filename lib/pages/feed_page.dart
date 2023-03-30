@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
-import 'package:qiita_client_yukik/models/fetch.dart';
+import 'package:qiita_client_yukik/models/fetchArticle.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
 
 class FeedPage extends StatefulWidget {
@@ -11,19 +11,20 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  late Future<List<Article>> futureArticle;
   String onChangedText = '';
   String onFieldSubmittedText = '';
   final textController = TextEditingController();
-  var _isLoading = true;
+  var _isLoading = false;
+  var hasError = false;
+  var _isEmpty = false;
   var _pageNumbers = 0;
   ScrollController? _scrollController;
-  List<Article> _fetchedArticles = [];
+  final List<Article> _fetchedArticles = [];
 
   @override
   void initState() {
     _scrollController = ScrollController();
-    futureArticle = API().fetchArticle();
+    fetchFunction();
     _scrollController!.addListener(_scrollListener);
     super.initState();
   }
@@ -40,28 +41,29 @@ class _FeedPageState extends State<FeedPage> {
           _scrollController!.position.maxScrollExtent;
       const threshold = 0.9;
       if (positionRate > threshold && !_isLoading) {
-        setState(() {
-          _isLoading = true;
-        });
-        try {
-          final newArticles = await API().fetchArticle(
-              searchText: onFieldSubmittedText, page: _pageNumbers);
-          setState(() {
-            _fetchedArticles.addAll(newArticles);
-            _pageNumbers++;
-            _isLoading = false;
-          });
-        } catch (e) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+        fetchFunction();
       }
     }
   }
 
+  Future<void> fetchFunction() async {
+    if (!_isLoading) {
+      setState(() {
+        _isEmpty = false;
+        _isLoading = true;
+        _pageNumbers++;
+      });
+      final newArticles = await ApiArticle()
+          .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
+      setState(() {
+        _fetchedArticles.addAll(newArticles);
+        _isLoading = false;
+      });
+    }
+    print(_isEmpty);
+  }
+
   Widget _listView(List<Article> items) {
-    print('表示件数： ${items.length}');
     return Expanded(
       child: ListView.builder(
         controller: _scrollController,
@@ -169,34 +171,52 @@ class _FeedPageState extends State<FeedPage> {
         });
       },
       // ユーザーがフィールドのテキストの編集が完了したことを示したときに呼び出される
-      onFieldSubmitted: (value) {
+      onFieldSubmitted: (value) async {
         setState(() {
           onFieldSubmittedText = value;
           _fetchedArticles.clear();
-          _isLoading = true;
           _pageNumbers = 1;
+          _isEmpty = false;
         });
-        futureArticle = API()
-            .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
+        await fetchFunction();
+        if (_fetchedArticles.isEmpty) {
+          setState(() {
+            _isEmpty = true;
+          });
+        }
       },
     );
   }
 
-  Widget _loadingView() {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
+  Widget _emptyView() {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 3,
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: const [
-            CircularProgressIndicator(
-              color: Colors.grey,
+            Text(
+              '検索にマッチする記事はありませんでした',
+              style: TextStyle(
+                fontSize: 14,
+              ),
             ),
-            SizedBox(
-              height: 8,
-            ),
-          ],
-        ),
+            SizedBox(height: 17),
+            Text(
+              '検索条件を変えるなどして再度検索をしてください',
+              style: TextStyle(
+                fontSize: 12,
+                color: Color(0xFF828282),
+              ),
+            )
+          ]),
+    );
+  }
+
+  Widget _loadingView() {
+    return const Center(
+      child: CircularProgressIndicator(
+        color: Colors.grey,
       ),
     );
   }
@@ -232,48 +252,16 @@ class _FeedPageState extends State<FeedPage> {
                 color: Colors.white,
               ),
             ),
-            FutureBuilder<List<Article>>(
-              future: futureArticle,
-              builder: (context, snapshot) {
-                print(snapshot.connectionState);
-                if (snapshot.connectionState == ConnectionState.done &&
-                    _isLoading) {
-                  print('通信完了');
-                  _isLoading = false;
-                  _pageNumbers += 1;
-                  _fetchedArticles.addAll(snapshot.data!);
-                }
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  return _listView(_fetchedArticles);
-                } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-                  return SizedBox(
-                    height: MediaQuery.of(context).size.height / 3,
-                    child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: const [
-                          Text(
-                            '検索にマッチする記事はありませんでした',
-                            style: TextStyle(
-                              fontSize: 14,
-                            ),
-                          ),
-                          SizedBox(height: 17),
-                          Text(
-                            '検索条件を変えるなどして再度検索をしてください',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF828282),
-                            ),
-                          )
-                        ]),
-                  );
-                } else if (snapshot.hasError) {
-                  return Text('${snapshot.error}');
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            ),
+            Expanded(
+              child: Center(
+                  child: hasError
+                      ? const Text('error')
+                      : _isEmpty
+                          ? _emptyView()
+                          : _isLoading && _pageNumbers == 1
+                              ? _loadingView()
+                              : _listView(_fetchedArticles)),
+            )
           ],
         ));
   }
