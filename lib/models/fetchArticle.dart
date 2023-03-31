@@ -9,7 +9,6 @@ class ApiArticle {
 
   Future<List<Article>> fetchArticle({String? searchText, int? page}) async {
     var url = baseUrl;
-    print('通信中');
 
     if (searchText != null) {
       url =
