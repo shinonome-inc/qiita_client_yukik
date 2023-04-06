@@ -86,54 +86,51 @@ class _TagDetailState extends State<TagDetail> {
                       child: FeedDetail(url: items[index].webUrl));
                 });
           },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 38,
-                  height: 38,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: Image.network(
-                      items[index].users.imgUrl,
-                      errorBuilder: (c, o, s) {
-                        return const SizedBox(
-                          height: 38,
-                        );
-                      },
+          child: Row(
+            children: [
+              SizedBox(
+                width: 38,
+                height: 38,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(100),
+                  child: Image.network(
+                    items[index].users.imgUrl,
+                    errorBuilder: (c, o, s) {
+                      return const SizedBox(
+                        height: 38,
+                      );
+                    },
+                  ),
+                ),
+              ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      items[index].title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
+                    Text(
+                      '@${items[index].users.userId.toString()}'
+                      ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                      ' いいね:${items[index].likes.toString()}',
+                      style: const TextStyle(
+                          fontSize: 12, color: Color(0xFF828282)),
+                    ),
+                    const Divider(height: 16),
+                  ],
                 ),
-                const SizedBox(
-                  width: 8,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        items[index].title,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '@${items[index].users.userId.toString()}'
-                        '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                        '　いいね：${items[index].likes.toString()}',
-                        style: const TextStyle(
-                            fontSize: 12, color: Color(0xFF828282)),
-                      ),
-                      const Divider(height: 16),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },
@@ -155,8 +152,8 @@ class _TagDetailState extends State<TagDetail> {
             title: Text(widget.tagName,
                 style: const TextStyle(
                   color: Colors.black,
+                  fontFamily: 'Pacifico-Regular',
                   fontSize: 17,
-                  fontWeight: FontWeight.w100,
                 )),
             centerTitle: true,
             backgroundColor: Colors.white,
