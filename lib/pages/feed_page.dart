@@ -92,43 +92,40 @@ class _FeedPageState extends State<FeedPage> {
                         child: FeedDetail(url: items[index].webUrl));
                   });
             },
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(items[index].users.imgUrl),
-                    radius: 20,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          items[index].title,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(items[index].users.imgUrl),
+                  radius: 20,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        items[index].title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
                         ),
-                        Text(
-                          '@${items[index].users.userId.toString()}'
-                          '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                          '　いいね：${items[index].likes.toString()}',
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF828282)),
-                        ),
-                        const Divider(height: 16),
-                      ],
-                    ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '@${items[index].users.userId.toString()}'
+                        ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                        ' いいね:${items[index].likes.toString()}',
+                        style: const TextStyle(
+                            fontSize: 12, color: Color(0xFF828282)),
+                      ),
+                      const Divider(height: 16),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },

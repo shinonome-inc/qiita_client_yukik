@@ -17,6 +17,7 @@ class _FeedDetailState extends State<FeedDetail> {
     const String javaScript = 'document.documentElement.scrollHeight;';
     final result = await controller.runJavaScriptReturningResult(javaScript);
     setState(() {
+      print('UPDATE WebView contents height: $result');
       pageHeight = double.parse(result.toString());
     });
   }
