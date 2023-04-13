@@ -4,13 +4,15 @@ import 'package:http/http.dart' as http;
 
 import 'article.dart';
 
-class ApiTagDetail {
-  final baseUrl = 'https://qiita.com/api/v2/items';
+class ApiUser {
+  final baseUrl = 'https://qiita.com/api/v2/authenticated_user/items';
 
-  Future<List<Article>> fetchTagDetail({int? page, String? tag}) async {
+  Future<List<Article>> fetchUsersArticle(
+      {String? searchText, int? page}) async {
     var url = baseUrl;
-    url = '$baseUrl?page=$page&per_page=20&query=tag%3A$tag';
-
+    if (searchText != null) {
+      url = '$baseUrl?page=$page&per_page=20';
+    }
     final response = await http.get(
       Uri.parse(url),
       headers: {

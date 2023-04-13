@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/pages/feed_page.dart';
+import 'package:qiita_client_yukik/pages/mypage_notlogin.dart';
 import 'package:qiita_client_yukik/pages/tag_page.dart';
 
 class Root extends StatefulWidget {
@@ -13,9 +14,7 @@ class _RootState extends State<Root> {
   static const _screens = [
     FeedPage(),
     TagPage(),
-    Center(
-      child: Text('mypage'),
-    ),
+    MyPageNotLogin(),
     Center(
       child: Text('setting'),
     ),
