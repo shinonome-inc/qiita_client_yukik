@@ -4,17 +4,13 @@ import 'package:http/http.dart' as http;
 
 import 'article.dart';
 
-class ApiArticle {
+class ApiTagDetail {
   final baseUrl = 'https://qiita.com/api/v2/items';
 
-  Future<List<Article>> fetchArticle({String? searchText, int? page}) async {
+  Future<List<Article>> fetchTagDetail({int? page, String? tag}) async {
     var url = baseUrl;
-    print('通信中');
+    url = '$baseUrl?page=$page&per_page=20&query=tag%3A$tag';
 
-    if (searchText != null) {
-      url =
-          '$baseUrl?page=$page&per_page=20&query=body%3A$searchText+title%3A$searchText+tag';
-    }
     final response = await http.get(
       Uri.parse(url),
       headers: {
