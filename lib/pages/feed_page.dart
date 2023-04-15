@@ -60,79 +60,73 @@ class _FeedPageState extends State<FeedPage> {
         _isLoading = false;
       });
     }
-    print(_isEmpty);
   }
 
   Widget _listView(List<Article> items) {
-    return Expanded(
-      child: ListView.builder(
-        controller: _scrollController,
-        itemCount: _isLoading ? items.length + 1 : items.length,
-        itemBuilder: (context, index) {
-          if (index == items.length) {
-            return _loadingView();
-          }
-          return ElevatedButton(
-            style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-              elevation: MaterialStateProperty.all(0),
-            ),
-            onPressed: () {
-              showModalBottomSheet<void>(
-                  isScrollControlled: true,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return Container(
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          topRight: Radius.circular(10),
-                        )),
-                        height: MediaQuery.of(context).size.height * 0.9,
-                        child: FeedDetail(url: items[index].webUrl));
-                  });
-            },
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(items[index].users.imgUrl),
-                    radius: 20,
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          items[index].title,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.black,
-                          ),
-                          maxLines: 3,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Text(
-                          '@${items[index].users.userId.toString()}'
-                          '　投稿日：${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                          '　いいね：${items[index].likes.toString()}',
-                          style: const TextStyle(
-                              fontSize: 12, color: Color(0xFF828282)),
-                        ),
-                        const Divider(height: 16),
-                      ],
-                    ),
-                  ),
-                ],
+    return ListView.builder(
+      controller: _scrollController,
+      itemCount: _isLoading ? items.length + 1 : items.length,
+      itemBuilder: (context, index) {
+        if (index == items.length) {
+          return _loadingView();
+        }
+        return ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+            elevation: MaterialStateProperty.all(0),
+          ),
+          onPressed: () {
+            showModalBottomSheet<void>(
+                isScrollControlled: true,
+                context: context,
+                builder: (BuildContext context) {
+                  return Container(
+                      decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      )),
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      child: FeedDetail(url: items[index].webUrl));
+                });
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: NetworkImage(items[index].users.imgUrl),
+                radius: 20,
               ),
-            ),
-          );
-        },
-      ),
+              const SizedBox(
+                width: 8,
+              ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      items[index].title,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      '@${items[index].users.userId.toString()}'
+                      ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                      ' いいね:${items[index].likes.toString()}',
+                      style: const TextStyle(
+                          fontSize: 12, color: Color(0xFF828282)),
+                    ),
+                    const Divider(height: 16),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

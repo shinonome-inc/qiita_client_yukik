@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/models/accessToken.dart';
-import 'package:qiita_client_yukik/models/user.dart';
-import 'package:qiita_client_yukik/pages/mypage.dart';
+import 'package:qiita_client_yukik/root.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LogInPage extends StatefulWidget {
@@ -14,14 +13,11 @@ class LogInPage extends StatefulWidget {
 
 class _LogInPageState extends State<LogInPage> {
   late WebViewController controller;
-  late User _user;
   double? pageHeight;
 
   Future<void> _login(String url) async {
-    String code = url.split('https://qiita.com/settings/applications?code=').;
-    print(code);
-    final String accessToken = await AccessToken.createAccessToken(code);
-    _user = await AccessToken.fetchUser(accessToken);
+    String? code = Uri.parse(url).queryParameters['code'];
+    await AccessToken.createAccessToken(code!);
   }
 
   @override
@@ -39,7 +35,7 @@ class _LogInPageState extends State<LogInPage> {
               await _login(url);
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MyPage(userUrl: _user)),
+                MaterialPageRoute(builder: (context) => const Root()),
               );
             }
           },
@@ -63,7 +59,7 @@ class _LogInPageState extends State<LogInPage> {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: pageHeight ?? MediaQuery.of(context).size.height * 0.9,
           child: WebViewWidget(
             controller: controller,

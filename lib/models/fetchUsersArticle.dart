@@ -2,17 +2,15 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import 'article.dart';
+import 'usersArticle.dart';
 
-class ApiUser {
+class ApiUsersArticle {
   final baseUrl = 'https://qiita.com/api/v2/authenticated_user/items';
 
-  Future<List<Article>> fetchUsersArticle(
-      {String? searchText, int? page}) async {
+  Future<List<UsersArticle>> fetchUsersArticle({int? page}) async {
     var url = baseUrl;
-    if (searchText != null) {
-      url = '$baseUrl?page=$page&per_page=20';
-    }
+    url = '$baseUrl?page=$page&per_page=20';
+
     final response = await http.get(
       Uri.parse(url),
       headers: {
@@ -21,12 +19,12 @@ class ApiUser {
     );
     if (response.statusCode == 200) {
       final List<dynamic> jsonArray = json.decode(response.body);
-      final items = jsonArray.map((item) {
-        return Article.fromJson(item);
+      final usersItems = jsonArray.map((item) {
+        return UsersArticle.fromJson(item);
       }).toList();
-      return items;
+      return usersItems;
     } else {
-      throw Exception('Failed to fetch article');
+      throw Exception('Failed to fetch Article');
     }
   }
 }
