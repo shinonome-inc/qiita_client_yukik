@@ -160,6 +160,7 @@ class _MyPageState extends State<MyPage> {
   Widget build(BuildContext context) {
     return accessTokenIsSaved
         ? Scaffold(
+            backgroundColor: Colors.white,
             appBar: AppBar(
               title: const Text('MyPage',
                   style: TextStyle(
@@ -277,6 +278,8 @@ class _MyPageState extends State<MyPage> {
                 )
               ],
             ))
-        : const MyPageNotLogin();
+        : _isLoading
+            ? _loadingView()
+            : const MyPageNotLogin();
   }
 }

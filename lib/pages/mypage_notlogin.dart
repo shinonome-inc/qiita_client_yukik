@@ -12,6 +12,7 @@ class _MyPageNotLoginState extends State<MyPageNotLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('MyPage',
             style: TextStyle(

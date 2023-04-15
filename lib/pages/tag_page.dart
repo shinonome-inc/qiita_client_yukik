@@ -151,6 +151,7 @@ class _TagPageState extends State<TagPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text('Tags',
               style: TextStyle(
