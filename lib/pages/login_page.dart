@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_client_yukik/models/accessToken.dart';
+import 'package:qiita_client_yukik/models/user.dart';
 import 'package:qiita_client_yukik/root.dart';
+import 'package:qiita_client_yukik/services/access_token.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LogInPage extends StatefulWidget {
-  const LogInPage({Key? key, required this.url}) : super(key: key);
+  LogInPage({Key? key, required this.url}) : super(key: key);
   final String url;
+  late String token;
 
   @override
   State<LogInPage> createState() => _LogInPageState();
@@ -14,10 +16,13 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   late WebViewController controller;
   double? pageHeight;
+  late User _authenticatedUser;
 
   Future<void> _login(String url) async {
     String? code = Uri.parse(url).queryParameters['code'];
-    await AccessToken.createAccessToken(code!);
+    final String accessToken = await AccessToken().createAccessToken(code!);
+    _authenticatedUser =
+        await AccessToken().fetchAuthenticatedUser(accessToken);
   }
 
   @override
@@ -33,6 +38,7 @@ class _LogInPageState extends State<LogInPage> {
                 url.contains('https://qiita.com/settings/applications');
             if (hasCode) {
               await _login(url);
+
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Root()),

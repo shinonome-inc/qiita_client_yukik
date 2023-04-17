@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_client_yukik/models/fetchTag.dart';
 import 'package:qiita_client_yukik/models/tag.dart';
 import 'package:qiita_client_yukik/pages/tag_detail.dart';
+import 'package:qiita_client_yukik/services/fetch_tag.dart';
 
 class TagPage extends StatefulWidget {
   const TagPage({Key? key}) : super(key: key);

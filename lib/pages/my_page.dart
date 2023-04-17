@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:qiita_client_yukik/models/accessToken.dart';
-import 'package:qiita_client_yukik/models/fetchUsersArticle.dart';
 import 'package:qiita_client_yukik/models/user.dart';
-import 'package:qiita_client_yukik/models/usersArticle.dart';
+import 'package:qiita_client_yukik/models/users_article.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
-import 'package:qiita_client_yukik/pages/mypage_notlogin.dart';
+import 'package:qiita_client_yukik/pages/my_page_notlogin.dart';
+import 'package:qiita_client_yukik/services/access_token.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyPage extends StatefulWidget {
@@ -71,8 +70,11 @@ class _MyPageState extends State<MyPage> {
         _pageNumbers++;
       });
       final newArticles =
-          await ApiUsersArticle().fetchUsersArticle(page: _pageNumbers);
-      _authenticatedUser = await AccessToken().fetchAuthenticatedUser();
+          await AccessToken().fetchUsersArticle(page: _pageNumbers);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final String? accessToken = prefs.getString('token');
+      _authenticatedUser =
+          await AccessToken().fetchAuthenticatedUser(accessToken);
       if (mounted) {
         setState(() {
           _fetchedUsersArticles.addAll(newArticles);

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
-import 'package:qiita_client_yukik/models/fetchArticle.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
+import 'package:qiita_client_yukik/services/fetch_article.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);

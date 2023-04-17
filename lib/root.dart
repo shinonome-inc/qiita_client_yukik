@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/pages/feed_page.dart';
-import 'package:qiita_client_yukik/pages/mypage.dart';
+import 'package:qiita_client_yukik/pages/my_page.dart';
 import 'package:qiita_client_yukik/pages/tag_page.dart';
 
 class Root extends StatefulWidget {

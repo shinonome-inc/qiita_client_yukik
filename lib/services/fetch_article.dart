@@ -2,15 +2,18 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-import 'article.dart';
+import '../models/article.dart';
 
-class ApiTagDetail {
+class ApiArticle {
   final baseUrl = 'https://qiita.com/api/v2/items';
 
-  Future<List<Article>> fetchTagDetail({int? page, String? tag}) async {
+  Future<List<Article>> fetchArticle({String? searchText, int? page}) async {
     var url = baseUrl;
-    url = '$baseUrl?page=$page&per_page=20&query=tag%3A$tag';
 
+    if (searchText != null) {
+      url =
+          '$baseUrl?page=$page&per_page=20&query=body%3A$searchText+title%3A$searchText';
+    }
     final response = await http.get(
       Uri.parse(url),
       headers: {
