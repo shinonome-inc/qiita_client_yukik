@@ -5,6 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:qiita_client_yukik/models/user.dart';
 import 'package:qiita_client_yukik/models/users_article.dart';
+import 'package:qiita_client_yukik/services/http_function.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccessToken {
@@ -43,10 +44,7 @@ class AccessToken {
 
   Future<User> fetchAuthenticatedUser(String? accessToken) async {
     var url = baseUrl;
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
+    final response = await HttpFunc().httpGet(url, accessToken!);
 
     if (response.statusCode == 200) {
       return User.fromJson(json.decode(response.body));
@@ -60,10 +58,7 @@ class AccessToken {
       {int? page, String? accessToken}) async {
     var url = usersArticleUrl;
     url = '$usersArticleUrl?page=$page&per_page=20';
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {'Authorization': 'Bearer $accessToken'},
-    );
+    final response = await HttpFunc().httpGet(url, accessToken!);
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonArray = json.decode(response.body);
