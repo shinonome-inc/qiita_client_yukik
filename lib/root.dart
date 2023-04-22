@@ -15,9 +15,7 @@ class _RootState extends State<Root> {
     FeedPage(),
     TagPage(),
     MyPage(),
-    Center(
-      child: Text('setting'),
-    ),
+    Text('settings'),
   ];
   int _selectedIndex = 0;
 
@@ -32,6 +30,7 @@ class _RootState extends State<Root> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
