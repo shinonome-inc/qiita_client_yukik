@@ -3,6 +3,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qiita_client_yukik/models/user.dart';
 import 'package:qiita_client_yukik/root.dart';
 import 'package:qiita_client_yukik/services/access_token.dart';
+import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LogInPage extends StatefulWidget {
@@ -54,17 +55,7 @@ class _LogInPageState extends State<LogInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Log Auth',
-            style: TextStyle(
-              color: Colors.black,
-              fontFamily: 'Pacifico-Regular',
-              fontSize: 17,
-            )),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
+      appBar: const AppBarComponent(title: 'Log Auth'),
       body: SingleChildScrollView(
         child: SizedBox(
           height: pageHeight ?? MediaQuery.of(context).size.height * 0.9,

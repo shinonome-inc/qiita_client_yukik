@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/models/tag.dart';
 import 'package:qiita_client_yukik/pages/tag_detail.dart';
 import 'package:qiita_client_yukik/services/fetch_tag.dart';
+import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
 class TagPage extends StatefulWidget {
   const TagPage({Key? key}) : super(key: key);
@@ -152,17 +153,7 @@ class _TagPageState extends State<TagPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-          title: const Text('Tags',
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'Pacifico-Regular',
-                fontSize: 17,
-              )),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
+        appBar: const AppBarComponent(title: 'Tags'),
         body: Column(
           children: [
             const Divider(height: 0.5),

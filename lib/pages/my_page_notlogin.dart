@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/pages/top_page.dart';
+import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
 class MyPageNotLogin extends StatefulWidget {
   const MyPageNotLogin({super.key});
@@ -13,17 +14,7 @@ class _MyPageNotLoginState extends State<MyPageNotLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        title: const Text('MyPage',
-            style: TextStyle(
-              color: Colors.black,
-              fontFamily: 'Pacifico-Regular',
-              fontSize: 17,
-            )),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
+      appBar: const AppBarComponent(title: 'MyPage'),
       body: Container(
         alignment: Alignment.center,
         child: Column(

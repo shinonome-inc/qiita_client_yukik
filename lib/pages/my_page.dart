@@ -4,6 +4,8 @@ import 'package:qiita_client_yukik/models/user.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/pages/my_page_notlogin.dart';
 import 'package:qiita_client_yukik/services/access_token.dart';
+import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
+import 'package:qiita_client_yukik/ui_components/follow_counts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyPage extends StatefulWidget {
@@ -161,17 +163,7 @@ class _MyPageState extends State<MyPage> {
     return fetchedAuthenticatedUser
         ? Scaffold(
             backgroundColor: Colors.white,
-            appBar: AppBar(
-              title: const Text('MyPage',
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: 'Pacifico-Regular',
-                    fontSize: 17,
-                  )),
-              centerTitle: true,
-              backgroundColor: Colors.white,
-              elevation: 0,
-            ),
+            appBar: const AppBarComponent(title: 'MyPage'),
             body: Column(
               children: [
                 const Divider(height: 0.5),
@@ -212,35 +204,14 @@ class _MyPageState extends State<MyPage> {
                         const SizedBox(height: 16),
                         Row(
                           children: [
-                            Text(
-                              '${authenticatedUser.followees}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
+                            FollowCounts(
+                              count: authenticatedUser.followees,
+                              isFollowers: false,
                             ),
-                            const Text(
-                              ' フォロー中　',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                                color: Color(0xFF828282),
-                              ),
+                            FollowCounts(
+                              count: authenticatedUser.followers,
+                              isFollowers: true,
                             ),
-                            Text(
-                              '${authenticatedUser.followers}',
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            const Text(
-                              ' フォロワー',
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            )
                           ],
                         ),
                       ],
@@ -269,13 +240,9 @@ class _MyPageState extends State<MyPage> {
                               )
                             : isLoading && pageNumbers == 1
                                 ? _loadingView()
-                                : Column(
-                                    children: [
-                                      _listView(fetchedUsersArticles),
-                                    ],
-                                  ),
+                                : _listView(fetchedUsersArticles),
                   ),
-                )
+                ),
               ],
             ))
         : isLoading
