@@ -88,7 +88,6 @@ class _MyPageState extends State<MyPage> {
     return ListView.builder(
       controller: scrollController,
       scrollDirection: Axis.vertical,
-      shrinkWrap: true,
       itemCount: isLoading ? items.length + 1 : items.length,
       itemBuilder: (context, index) {
         if (index == items.length) {
