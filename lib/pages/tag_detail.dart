@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
-import 'package:qiita_client_yukik/models/fetchTagDetail.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
+import 'package:qiita_client_yukik/services/fetch_tag_detail.dart';
+import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
 class TagDetail extends StatefulWidget {
-  String tagName;
-  TagDetail({Key? key, required this.tagName}) : super(key: key);
+  const TagDetail({Key? key, required this.tagName}) : super(key: key);
+  final String tagName;
+
   @override
   State<TagDetail> createState() => _TagDetailState();
 }
@@ -148,18 +150,7 @@ class _TagDetailState extends State<TagDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-            title: Text(widget.tagName,
-                style: const TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Pacifico-Regular',
-                  fontSize: 17,
-                )),
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: true,
-            iconTheme: const IconThemeData(color: Color(0xFF468300))),
+        appBar: AppBarComponent(title: widget.tagName),
         body: Column(
           children: [
             const Divider(height: 0.5),

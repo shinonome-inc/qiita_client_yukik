@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
-import 'package:qiita_client_yukik/models/fetchArticle.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
+import 'package:qiita_client_yukik/services/fetch_article.dart';
+import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -60,7 +61,6 @@ class _FeedPageState extends State<FeedPage> {
         _isLoading = false;
       });
     }
-    print(_isEmpty);
   }
 
   Widget _listView(List<Article> items) {
@@ -219,17 +219,8 @@ class _FeedPageState extends State<FeedPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Feed',
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: 'Pacifico-Regular',
-                fontSize: 17,
-              )),
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          elevation: 0,
-        ),
+        backgroundColor: Colors.white,
+        appBar: const AppBarComponent(title: 'Feed'),
         body: Column(
           children: [
             Container(

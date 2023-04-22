@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/pages/feed_page.dart';
+import 'package:qiita_client_yukik/pages/my_page.dart';
 import 'package:qiita_client_yukik/pages/tag_page.dart';
 
 class Root extends StatefulWidget {
@@ -13,12 +14,8 @@ class _RootState extends State<Root> {
   static const _screens = [
     FeedPage(),
     TagPage(),
-    Center(
-      child: Text('mypage'),
-    ),
-    Center(
-      child: Text('setting'),
-    ),
+    MyPage(),
+    Text('settings'),
   ];
   int _selectedIndex = 0;
 
@@ -33,6 +30,7 @@ class _RootState extends State<Root> {
     return Scaffold(
       body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: Colors.white,
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[

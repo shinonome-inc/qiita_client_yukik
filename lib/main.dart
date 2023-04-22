@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qiita_client_yukik/pages/feed_page.dart';
+import 'package:qiita_client_yukik/pages/my_page.dart';
 import 'package:qiita_client_yukik/pages/top_page.dart';
 
-void main() {
+Future main() async {
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 
@@ -19,6 +22,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/top': (context) => TopPage(),
         '/feed': (context) => FeedPage(),
+        '/my': (context) => MyPage(),
       },
     );
   }
