@@ -8,8 +8,8 @@ import 'package:qiita_client_yukik/models/users_article.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AccessToken {
-  final String tokenUrl = 'https://qiita.com/api/v2/access_tokens';
-  final String baseUrl = 'https://qiita.com/api/v2/authenticated_user';
+  String tokenUrl = 'https://qiita.com/api/v2/access_tokens';
+  final String userUrl = 'https://qiita.com/api/v2/authenticated_user';
   final String usersArticleUrl =
       'https://qiita.com/api/v2/authenticated_user/items';
 
@@ -42,7 +42,7 @@ class AccessToken {
   }
 
   Future<User> fetchAuthenticatedUser(String accessToken) async {
-    var url = baseUrl;
+    var url = userUrl;
     final response = await http.get(
       Uri.parse(url),
       headers: {'Authorization': 'Bearer $accessToken'},

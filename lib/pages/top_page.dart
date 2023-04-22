@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qiita_client_yukik/pages/login_page.dart';
 import 'package:qiita_client_yukik/root.dart';
 
@@ -11,9 +10,6 @@ class TopPage extends StatefulWidget {
 }
 
 class _TopPageState extends State<TopPage> {
-  final String clientId = dotenv.get('CLIENT_ID');
-  final String clientSecret = dotenv.get('CLIENT_SECRET');
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,9 +68,7 @@ class _TopPageState extends State<TopPage> {
                                 topRight: Radius.circular(10),
                               )),
                               height: MediaQuery.of(context).size.height * 0.9,
-                              child: LogInPage(
-                                  url:
-                                      'https://qiita.com/api/v2/oauth/authorize?client_id=$clientId&scope=read_qiita&state=bb17785d811bb1913ef54b0a7657de780defaa2d'),
+                              child: LogInPage(),
                             );
                           });
                     },

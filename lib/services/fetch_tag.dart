@@ -4,11 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:qiita_client_yukik/models/tag.dart';
 
 class ApiTag {
-  final baseUrl = 'https://qiita.com/api/v2/tags';
-
   Future<List<Tag>> fetchTag({required int page}) async {
-    var url = baseUrl;
-    url = '$baseUrl?page=$page&per_page=20&sort=count';
+    var url = 'https://qiita.com/api/v2/tags?page=$page&per_page=20&sort=count';
     final response = await http.get(
       Uri.parse(url),
       headers: {

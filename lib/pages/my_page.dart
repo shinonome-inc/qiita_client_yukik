@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/user.dart';
-import 'package:qiita_client_yukik/models/users_article.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/pages/my_page_notlogin.dart';
 import 'package:qiita_client_yukik/services/access_token.dart';
@@ -18,7 +17,7 @@ class _MyPageState extends State<MyPage> {
   var hasError = false;
   var pageNumbers = 0;
   ScrollController? scrollController;
-  final List<UsersArticle> fetchedUsersArticles = [];
+  var fetchedUsersArticles = [];
   bool accessTokenIsSaved = false;
   bool fetchedAuthenticatedUser = false;
   late User authenticatedUser;
@@ -83,7 +82,7 @@ class _MyPageState extends State<MyPage> {
     }
   }
 
-  Widget _listView(List<UsersArticle> items) {
+  Widget _listView(List<dynamic> items) {
     return ListView.builder(
       controller: scrollController,
       scrollDirection: Axis.vertical,

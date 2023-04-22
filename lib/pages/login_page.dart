@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qiita_client_yukik/models/user.dart';
 import 'package:qiita_client_yukik/root.dart';
 import 'package:qiita_client_yukik/services/access_token.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class LogInPage extends StatefulWidget {
-  LogInPage({Key? key, required this.url}) : super(key: key);
-  final String url;
-  late String token;
+  const LogInPage({Key? key}) : super(key: key);
 
   @override
   State<LogInPage> createState() => _LogInPageState();
@@ -17,6 +16,8 @@ class _LogInPageState extends State<LogInPage> {
   late WebViewController controller;
   double? pageHeight;
   late User authenticatedUser;
+  final String clientId = dotenv.get('CLIENT_ID');
+  final String clientSecret = dotenv.get('CLIENT_SECRET');
 
   Future<void> _login(String url) async {
     String? code = Uri.parse(url).queryParameters['code'];
@@ -37,6 +38,7 @@ class _LogInPageState extends State<LogInPage> {
                 url.contains('https://qiita.com/settings/applications');
             if (hasCode) {
               await _login(url);
+              if (!mounted) return;
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Root()),
@@ -45,7 +47,8 @@ class _LogInPageState extends State<LogInPage> {
           },
         ),
       )
-      ..loadRequest(Uri.parse(widget.url));
+      ..loadRequest(Uri.parse(
+          'https://qiita.com/api/v2/oauth/authorize?client_id=$clientId&scope=read_qiita&state=bb17785d811bb1913ef54b0a7657de780defaa2d'));
   }
 
   @override
