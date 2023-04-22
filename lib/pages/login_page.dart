@@ -16,13 +16,12 @@ class LogInPage extends StatefulWidget {
 class _LogInPageState extends State<LogInPage> {
   late WebViewController controller;
   double? pageHeight;
-  late User _authenticatedUser;
+  late User authenticatedUser;
 
   Future<void> _login(String url) async {
     String? code = Uri.parse(url).queryParameters['code'];
     final String accessToken = await AccessToken().createAccessToken(code!);
-    _authenticatedUser =
-        await AccessToken().fetchAuthenticatedUser(accessToken);
+    authenticatedUser = await AccessToken().fetchAuthenticatedUser(accessToken);
   }
 
   @override
@@ -38,7 +37,6 @@ class _LogInPageState extends State<LogInPage> {
                 url.contains('https://qiita.com/settings/applications');
             if (hasCode) {
               await _login(url);
-
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const Root()),

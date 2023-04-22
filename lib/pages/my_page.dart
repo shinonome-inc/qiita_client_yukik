@@ -14,71 +14,70 @@ class MyPage extends StatefulWidget {
 }
 
 class _MyPageState extends State<MyPage> {
-  var _isLoading = false;
+  var isLoading = false;
   var hasError = false;
-  var _pageNumbers = 0;
-  ScrollController? _scrollController;
-  final List<UsersArticle> _fetchedUsersArticles = [];
+  var pageNumbers = 0;
+  ScrollController? scrollController;
+  final List<UsersArticle> fetchedUsersArticles = [];
   bool accessTokenIsSaved = false;
-  late User _authenticatedUser;
+  bool fetchedAuthenticatedUser = false;
+  late User authenticatedUser;
+  String accessToken = '';
 
   @override
   void initState() {
-    _scrollController = ScrollController();
-    fetchFunction();
-    _scrollController!.addListener(_scrollListener);
+    scrollController = ScrollController();
+    scrollController!.addListener(_scrollListener);
+    Future(() async {
+      await setUpAccessToken();
+      await fetchFunction();
+    });
     super.initState();
-    tokenExistence();
   }
 
   @override
   void dispose() {
-    _scrollController?.dispose();
+    scrollController?.dispose();
     super.dispose();
   }
 
-  static Future<String?> readToken() async {
+  Future<void> setUpAccessToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
-    final String? accessToken = prefs.getString('token');
-    return accessToken;
-  }
+    final fetchedAccessToken = prefs.getString('token') ?? "";
+    final isSaved = fetchedAccessToken != "";
 
-  static Future<bool> _accessTokenIsSaved() async {
-    final accessToken = await readToken();
-    return accessToken != null;
-  }
-
-  void tokenExistence() async {
-    accessTokenIsSaved = await _accessTokenIsSaved();
+    setState(() {
+      accessTokenIsSaved = isSaved;
+      accessToken = fetchedAccessToken;
+    });
   }
 
   void _scrollListener() async {
-    if (_scrollController != null) {
-      double positionRate = _scrollController!.offset /
-          _scrollController!.position.maxScrollExtent;
+    if (scrollController != null) {
+      double positionRate =
+          scrollController!.offset / scrollController!.position.maxScrollExtent;
       const threshold = 0.9;
-      if (positionRate > threshold && !_isLoading) {
+      if (positionRate > threshold && !isLoading) {
         fetchFunction();
       }
     }
   }
 
   Future<void> fetchFunction() async {
-    if (!_isLoading) {
+    if (accessTokenIsSaved && !isLoading) {
       setState(() {
-        _isLoading = true;
-        _pageNumbers++;
+        isLoading = true;
+        pageNumbers++;
       });
       final newArticles =
-          await AccessToken().fetchUsersArticle(page: _pageNumbers);
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final String? accessToken = prefs.getString('token');
-      _authenticatedUser =
+          await AccessToken().fetchUsersArticle(pageNumbers, accessToken);
+      authenticatedUser =
           await AccessToken().fetchAuthenticatedUser(accessToken);
       if (mounted) {
         setState(() {
-          _fetchedUsersArticles.addAll(newArticles);
-          _isLoading = false;
+          fetchedUsersArticles.addAll(newArticles);
+          isLoading = false;
+          fetchedAuthenticatedUser = true;
         });
       }
     }
@@ -86,10 +85,10 @@ class _MyPageState extends State<MyPage> {
 
   Widget _listView(List<UsersArticle> items) {
     return ListView.builder(
-      controller: _scrollController,
+      controller: scrollController,
       scrollDirection: Axis.vertical,
       shrinkWrap: true,
-      itemCount: _isLoading ? items.length + 1 : items.length,
+      itemCount: isLoading ? items.length + 1 : items.length,
       itemBuilder: (context, index) {
         if (index == items.length) {
           return _loadingView();
@@ -132,7 +131,7 @@ class _MyPageState extends State<MyPage> {
                         overflow: TextOverflow.ellipsis,
                       ),
                       Text(
-                        '@${_authenticatedUser.userId}'
+                        '@${authenticatedUser.userId}'
                         ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
                         ' いいね:${items[index].likes.toString()}',
                         style: const TextStyle(
@@ -160,7 +159,7 @@ class _MyPageState extends State<MyPage> {
 
   @override
   Widget build(BuildContext context) {
-    return accessTokenIsSaved
+    return fetchedAuthenticatedUser
         ? Scaffold(
             backgroundColor: Colors.white,
             appBar: AppBar(
@@ -186,12 +185,12 @@ class _MyPageState extends State<MyPage> {
                       children: [
                         CircleAvatar(
                           backgroundImage:
-                              NetworkImage(_authenticatedUser.imgUrl),
+                              NetworkImage(authenticatedUser.imgUrl),
                           radius: 40,
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          _authenticatedUser.name,
+                          authenticatedUser.name,
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -199,7 +198,7 @@ class _MyPageState extends State<MyPage> {
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          '@${_authenticatedUser.userId}',
+                          '@${authenticatedUser.userId}',
                           style: const TextStyle(
                               color: Color(0xFF828282), fontSize: 12),
                         ),
@@ -207,7 +206,7 @@ class _MyPageState extends State<MyPage> {
                           height: 16,
                         ),
                         Text(
-                          _authenticatedUser.description,
+                          authenticatedUser.description,
                           style: const TextStyle(
                               color: Color(0xFF828282), fontSize: 12),
                         ),
@@ -215,7 +214,7 @@ class _MyPageState extends State<MyPage> {
                         Row(
                           children: [
                             Text(
-                              '${_authenticatedUser.followees}',
+                              '${authenticatedUser.followees}',
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -230,7 +229,7 @@ class _MyPageState extends State<MyPage> {
                               ),
                             ),
                             Text(
-                              '${_authenticatedUser.followers}',
+                              '${authenticatedUser.followers}',
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
@@ -265,22 +264,22 @@ class _MyPageState extends State<MyPage> {
                   child: Center(
                     child: hasError
                         ? const Text('error')
-                        : _fetchedUsersArticles.isEmpty
+                        : fetchedUsersArticles.isEmpty
                             ? Container(
                                 color: Colors.white,
                               )
-                            : _isLoading && _pageNumbers == 1
+                            : isLoading && pageNumbers == 1
                                 ? _loadingView()
                                 : Column(
                                     children: [
-                                      _listView(_fetchedUsersArticles),
+                                      _listView(fetchedUsersArticles),
                                     ],
                                   ),
                   ),
                 )
               ],
             ))
-        : _isLoading
+        : isLoading
             ? _loadingView()
             : const MyPageNotLogin();
   }
