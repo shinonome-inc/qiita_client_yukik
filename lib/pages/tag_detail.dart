@@ -5,8 +5,9 @@ import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/services/fetch_tag_detail.dart';
 
 class TagDetail extends StatefulWidget {
-  String tagName;
-  TagDetail({Key? key, required this.tagName}) : super(key: key);
+  const TagDetail({Key? key, required this.tagName}) : super(key: key);
+  final String tagName;
+
   @override
   State<TagDetail> createState() => _TagDetailState();
 }
