@@ -35,7 +35,10 @@ class SettingsModal extends StatelessWidget {
           ),
           Expanded(
             child: SingleChildScrollView(
-              child: Text(sentence),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(sentence),
+              ),
             ),
           ),
         ],
