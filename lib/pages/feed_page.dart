@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
+import 'package:qiita_client_yukik/pages/error_page.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/services/fetch_article.dart';
 import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
@@ -241,7 +242,7 @@ class _FeedPageState extends State<FeedPage> {
             Expanded(
               child: Center(
                   child: hasError
-                      ? const Text('error')
+                      ? const ErrorPage()
                       : _isEmpty
                           ? _emptyView()
                           : _isLoading && _pageNumbers == 1
