@@ -17,8 +17,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/top',
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          primarySwatch: Colors.blue, canvasColor: Colors.transparent),
       routes: {
         '/top': (context) => TopPage(),
         '/feed': (context) => FeedPage(),

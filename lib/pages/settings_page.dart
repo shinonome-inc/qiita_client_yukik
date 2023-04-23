@@ -15,7 +15,7 @@ class SettingPage extends StatefulWidget {
 }
 
 class _SettingPageState extends State<SettingPage> {
-  var hasError = false;
+  bool hasError = false;
   String version = '';
   late SharedPreferences? prefs;
   bool accessTokenIsSaved = false;
@@ -91,7 +91,10 @@ class _SettingPageState extends State<SettingPage> {
                 size: 16,
               ),
               onTap: () {
-                showModalBottomSheet<void>(
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                     isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
@@ -107,7 +110,13 @@ class _SettingPageState extends State<SettingPage> {
                 size: 16,
               ),
               onTap: () {
-                showModalBottomSheet<void>(
+                showModalBottomSheet(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10),
+                        topRight: Radius.circular(10),
+                      ),
+                    ),
                     isScrollControlled: true,
                     context: context,
                     builder: (BuildContext context) {
@@ -123,31 +132,34 @@ class _SettingPageState extends State<SettingPage> {
             height: 36,
           ),
           if (accessTokenIsSaved)
-            const Text(
-              '　その他',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xff828282),
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '　その他',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xff828282),
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                SettingsItem(
+                  title: 'ログアウトする',
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove('token');
+                    if (!mounted) return;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const TopPage()),
+                    );
+                  },
+                )
+              ],
             ),
-          if (accessTokenIsSaved)
-            const SizedBox(
-              height: 8,
-            ),
-          if (accessTokenIsSaved)
-            SettingsItem(
-              title: 'ログアウトする',
-              onTap: () async {
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.remove('token');
-                if (!mounted) return;
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const TopPage()),
-                );
-              },
-            )
         ],
       ),
     );
