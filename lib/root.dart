@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/pages/feed_page.dart';
 import 'package:qiita_client_yukik/pages/my_page.dart';
+import 'package:qiita_client_yukik/pages/settings_page.dart';
 import 'package:qiita_client_yukik/pages/tag_page.dart';
 
 class Root extends StatefulWidget {
@@ -15,7 +16,7 @@ class _RootState extends State<Root> {
     FeedPage(),
     TagPage(),
     MyPage(),
-    Text('settings'),
+    SettingPage(),
   ];
   int _selectedIndex = 0;
 
