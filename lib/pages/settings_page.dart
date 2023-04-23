@@ -93,7 +93,7 @@ class _SettingPageState extends State<SettingPage> {
               onTap: () {
                 showModalBottomSheet(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     isScrollControlled: true,
                     context: context,
@@ -111,11 +111,8 @@ class _SettingPageState extends State<SettingPage> {
               ),
               onTap: () {
                 showModalBottomSheet(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     isScrollControlled: true,
                     context: context,
