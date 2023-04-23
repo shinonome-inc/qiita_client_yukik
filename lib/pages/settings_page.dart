@@ -23,13 +23,13 @@ class _SettingPageState extends State<SettingPage> {
   @override
   void initState() {
     Future(() async {
-      await setAccessToken();
+      await getAccessToken();
       await getVersion();
     });
     super.initState();
   }
 
-  Future<void> setAccessToken() async {
+  Future<void> getAccessToken() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final fetchedAccessToken = prefs.getString('token') ?? "";
     final isSaved = fetchedAccessToken != "";
@@ -37,18 +37,6 @@ class _SettingPageState extends State<SettingPage> {
     setState(() {
       accessTokenIsSaved = isSaved;
     });
-  }
-
-  Widget logOut() {
-    return GestureDetector(
-      onTap: () async {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.remove('token');
-      },
-      child: const SettingsItem(
-        title: 'ログアウトする',
-      ),
-    );
   }
 
   Future<void> getVersion() async {
