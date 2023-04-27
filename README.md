@@ -2,6 +2,10 @@
 
 A new Flutter project.
 
+## 認証
+
+認証を行う際はGoogleドライブのeducation_mobile/YukiKフォルダ内にある.envファイルをqiita_client_yukik直下に入れてください。
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
