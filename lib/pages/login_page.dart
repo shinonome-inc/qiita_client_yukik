@@ -42,7 +42,7 @@ class _LogInPageState extends State<LogInPage> {
               if (!mounted) return;
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Root()),
+                MaterialPageRoute(builder: (context) => const Root(page: 0)),
               );
             }
           },

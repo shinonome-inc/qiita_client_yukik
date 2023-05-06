@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_client_yukik/root.dart';
 import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
 class ErrorPage extends StatefulWidget {
-  const ErrorPage({super.key});
+  const ErrorPage({super.key, required this.onPressed});
+  final void Function() onPressed;
 
   @override
   State<ErrorPage> createState() => _ErrorPageState();
@@ -43,12 +43,11 @@ class _ErrorPageState extends State<ErrorPage> {
                 )),
             const Spacer(),
             SizedBox(
-              width: 327,
+              width: MediaQuery.of(context).size.width - 48,
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Root()));
+                  widget.onPressed();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF74C13A),

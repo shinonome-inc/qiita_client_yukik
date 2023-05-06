@@ -6,6 +6,8 @@ import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/services/fetch_article.dart';
 import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
+import '../root.dart';
+
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
   @override
@@ -22,6 +24,7 @@ class _FeedPageState extends State<FeedPage> {
   var _pageNumbers = 0;
   ScrollController? _scrollController;
   final List<Article> _fetchedArticles = [];
+  List<Article> newArticles = [];
 
   @override
   void initState() {
@@ -55,12 +58,19 @@ class _FeedPageState extends State<FeedPage> {
         _isLoading = true;
         _pageNumbers++;
       });
-      final newArticles = await ApiArticle()
-          .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
-      setState(() {
-        _fetchedArticles.addAll(newArticles);
-        _isLoading = false;
-      });
+      try {
+        newArticles = await ApiArticle()
+            .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
+      } catch (e) {
+        setState(() {
+          hasError = true;
+        });
+      } finally {
+        setState(() {
+          _fetchedArticles.addAll(newArticles);
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -79,6 +89,9 @@ class _FeedPageState extends State<FeedPage> {
           ),
           onPressed: () {
             showModalBottomSheet<void>(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 isScrollControlled: true,
                 context: context,
                 builder: (BuildContext context) {
@@ -242,7 +255,12 @@ class _FeedPageState extends State<FeedPage> {
             Expanded(
               child: Center(
                   child: hasError
-                      ? const ErrorPage()
+                      ? ErrorPage(onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Root(page: 0)));
+                        })
                       : _isEmpty
                           ? _emptyView()
                           : _isLoading && _pageNumbers == 1

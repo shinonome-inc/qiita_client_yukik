@@ -5,7 +5,8 @@ import 'package:qiita_client_yukik/pages/settings_page.dart';
 import 'package:qiita_client_yukik/pages/tag_page.dart';
 
 class Root extends StatefulWidget {
-  const Root({super.key});
+  const Root({super.key, required this.page});
+  final int page;
 
   @override
   State<Root> createState() => _RootState();
@@ -18,7 +19,7 @@ class _RootState extends State<Root> {
     MyPage(),
     SettingPage(),
   ];
-  int _selectedIndex = 0;
+  int? _selectedIndex;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -29,10 +30,10 @@ class _RootState extends State<Root> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _screens[_selectedIndex],
+      body: _screens[_selectedIndex ?? widget.page],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
-        currentIndex: _selectedIndex,
+        currentIndex: _selectedIndex ?? widget.page,
         onTap: _onItemTapped,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
