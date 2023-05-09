@@ -179,7 +179,8 @@ class _TagPageState extends State<TagPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Root(page: 1)));
+                                    builder: (context) =>
+                                        const Root(page_index: 1)));
                           },
                         )
                       : _isLoading && _pageNumbers == 1

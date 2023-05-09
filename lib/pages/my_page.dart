@@ -187,7 +187,7 @@ class _MyPageState extends State<MyPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const Root(page: 2)));
+                              builder: (context) => const Root(page_index: 2)));
                     },
                   )
                 : Column(

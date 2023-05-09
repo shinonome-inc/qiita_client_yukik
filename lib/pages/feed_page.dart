@@ -240,7 +240,7 @@ class _FeedPageState extends State<FeedPage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const Root(page: 0)));
+                        builder: (context) => const Root(page_index: 0)));
               })
             : Column(
                 children: [
