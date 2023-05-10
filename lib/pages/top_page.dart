@@ -100,7 +100,8 @@ class _TopPageState extends State<TopPage> {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const Root()));
+                                builder: (context) =>
+                                    const Root(page_index: 0)));
                       },
                       child: const Text('ログインせずに利用する',
                           style: TextStyle(

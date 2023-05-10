@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class FeedDetail extends StatefulWidget {
@@ -40,14 +39,34 @@ class _FeedDetailState extends State<FeedDetail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const AppBarComponent(title: 'Article'),
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: pageHeight ?? MediaQuery.of(context).size.height * 0.9,
-          child: WebViewWidget(
-            controller: controller,
+      body: Column(
+        children: [
+          const SizedBox(
+            height: 12,
           ),
-        ),
+          const Text('Article',
+              style: TextStyle(
+                color: Colors.black,
+                fontFamily: 'Pacifico-Regular',
+                fontSize: 17,
+              )),
+          const SizedBox(
+            height: 12,
+          ),
+          const Divider(
+            height: 0.5,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              child: SizedBox(
+                height: pageHeight ?? MediaQuery.of(context).size.height * 0.9,
+                child: WebViewWidget(
+                  controller: controller,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

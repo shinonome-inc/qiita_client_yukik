@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
+import 'package:qiita_client_yukik/pages/error_page.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/services/fetch_tag_detail.dart';
 import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
@@ -19,6 +20,7 @@ class _TagDetailState extends State<TagDetail> {
   var _pageNumbers = 0;
   ScrollController? _scrollController;
   final List<Article> _fetchedArticles = [];
+  List<Article> newArticles = [];
 
   @override
   void initState() {
@@ -51,12 +53,17 @@ class _TagDetailState extends State<TagDetail> {
         _isLoading = true;
         _pageNumbers++;
       });
-      final newArticles = await ApiTagDetail()
-          .fetchTagDetail(page: _pageNumbers, tag: widget.tagName);
-      setState(() {
-        _fetchedArticles.addAll(newArticles);
-        _isLoading = false;
-      });
+      try {
+        newArticles = await ApiTagDetail()
+            .fetchTagDetail(page: _pageNumbers, tag: widget.tagName);
+      } catch (e) {
+        hasError = true;
+      } finally {
+        setState(() {
+          _fetchedArticles.addAll(newArticles);
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -169,7 +176,13 @@ class _TagDetailState extends State<TagDetail> {
             Expanded(
               child: Center(
                   child: hasError
-                      ? const Text('error')
+                      ? ErrorPage(onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      TagDetail(tagName: widget.tagName)));
+                        })
                       : _isLoading && _pageNumbers == 1
                           ? _loadingView()
                           : _listView(_fetchedArticles)),

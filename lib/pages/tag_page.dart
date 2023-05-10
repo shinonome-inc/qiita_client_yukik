@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_client_yukik/models/tag.dart';
+import 'package:qiita_client_yukik/pages/error_page.dart';
 import 'package:qiita_client_yukik/pages/tag_detail.dart';
+import 'package:qiita_client_yukik/root.dart';
 import 'package:qiita_client_yukik/services/fetch_tag.dart';
 import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
 
@@ -17,6 +19,7 @@ class _TagPageState extends State<TagPage> {
   var hasError = false;
   ScrollController? _scrollController;
   final List<Tag> _fetchedTags = [];
+  List<Tag> newTags = [];
 
   @override
   void initState() {
@@ -49,11 +52,19 @@ class _TagPageState extends State<TagPage> {
         _isLoading = true;
         _pageNumbers++;
       });
-      final newTags = await ApiTag().fetchTag(page: _pageNumbers);
-      setState(() {
-        _fetchedTags.addAll(newTags);
-        _isLoading = false;
-      });
+
+      try {
+        newTags = await ApiTag().fetchTag(page: _pageNumbers);
+      } catch (e) {
+        setState(() {
+          hasError = true;
+        });
+      } finally {
+        setState(() {
+          _fetchedTags.addAll(newTags);
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -163,7 +174,15 @@ class _TagPageState extends State<TagPage> {
             Expanded(
               child: Center(
                   child: hasError
-                      ? const Text('error')
+                      ? ErrorPage(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const Root(page_index: 1)));
+                          },
+                        )
                       : _isLoading && _pageNumbers == 1
                           ? _loadingView()
                           : _listTag(_fetchedTags)),

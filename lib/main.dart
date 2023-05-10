@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:qiita_client_yukik/pages/feed_page.dart';
 import 'package:qiita_client_yukik/pages/my_page.dart';
+import 'package:qiita_client_yukik/pages/tag_page.dart';
 import 'package:qiita_client_yukik/pages/top_page.dart';
 
 Future main() async {
@@ -20,9 +21,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       routes: {
-        '/top': (context) => TopPage(),
-        '/feed': (context) => FeedPage(),
-        '/my': (context) => MyPage(),
+        '/top': (context) => const TopPage(),
+        '/feed': (context) => const FeedPage(),
+        '/tag': (context) => const TagPage(),
+        '/my': (context) => const MyPage(),
       },
     );
   }

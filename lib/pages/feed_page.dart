@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/article.dart';
+import 'package:qiita_client_yukik/pages/error_page.dart';
 import 'package:qiita_client_yukik/pages/feed_detail.dart';
 import 'package:qiita_client_yukik/services/fetch_article.dart';
 import 'package:qiita_client_yukik/ui_components/app_bar_component.dart';
+
+import '../root.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -21,6 +24,7 @@ class _FeedPageState extends State<FeedPage> {
   var _pageNumbers = 0;
   ScrollController? _scrollController;
   final List<Article> _fetchedArticles = [];
+  List<Article> newArticles = [];
 
   @override
   void initState() {
@@ -54,12 +58,19 @@ class _FeedPageState extends State<FeedPage> {
         _isLoading = true;
         _pageNumbers++;
       });
-      final newArticles = await ApiArticle()
-          .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
-      setState(() {
-        _fetchedArticles.addAll(newArticles);
-        _isLoading = false;
-      });
+      try {
+        newArticles = await ApiArticle()
+            .fetchArticle(searchText: onFieldSubmittedText, page: _pageNumbers);
+      } catch (e) {
+        setState(() {
+          hasError = true;
+        });
+      } finally {
+        setState(() {
+          _fetchedArticles.addAll(newArticles);
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -78,6 +89,9 @@ class _FeedPageState extends State<FeedPage> {
           ),
           onPressed: () {
             showModalBottomSheet<void>(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 isScrollControlled: true,
                 context: context,
                 builder: (BuildContext context) {
@@ -221,34 +235,39 @@ class _FeedPageState extends State<FeedPage> {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: const AppBarComponent(title: 'Feed'),
-        body: Column(
-          children: [
-            Container(
-              color: Colors.white,
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                child: _textField(),
-              ),
-            ),
-            const Divider(height: 0.5),
-            SizedBox(
-              height: 8,
-              child: Container(
-                color: Colors.white,
-              ),
-            ),
-            Expanded(
-              child: Center(
-                  child: hasError
-                      ? const Text('error')
-                      : _isEmpty
-                          ? _emptyView()
-                          : _isLoading && _pageNumbers == 1
-                              ? _loadingView()
-                              : _listView(_fetchedArticles)),
-            )
-          ],
-        ));
+        body: hasError
+            ? ErrorPage(onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const Root(page_index: 0)));
+              })
+            : Column(
+                children: [
+                  Container(
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 10),
+                      child: _textField(),
+                    ),
+                  ),
+                  const Divider(height: 0.5),
+                  SizedBox(
+                    height: 8,
+                    child: Container(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Expanded(
+                    child: Center(
+                        child: _isEmpty
+                            ? _emptyView()
+                            : _isLoading && _pageNumbers == 1
+                                ? _loadingView()
+                                : _listView(_fetchedArticles)),
+                  )
+                ],
+              ));
   }
 }
