@@ -46,7 +46,7 @@ class _TagPageState extends State<TagPage> {
     }
   }
 
-  void fetchFunction() async {
+  Future<void> fetchFunction() async {
     if (!_isLoading) {
       setState(() {
         _isLoading = true;
@@ -69,12 +69,12 @@ class _TagPageState extends State<TagPage> {
   }
 
   Widget _loadingView() {
-    return Center(
+    return const Center(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.all(8.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
+          children: [
             CircularProgressIndicator(
               color: Colors.grey,
             ),
@@ -91,71 +91,78 @@ class _TagPageState extends State<TagPage> {
     if (tags.isEmpty) {
       return const SizedBox.shrink();
     }
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
-      child: GridView.builder(
-        controller: _scrollController,
-        itemCount: tags.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: MediaQuery.of(context).size.width ~/ 178),
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () {
-              String tagName = tags[index].tagId;
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TagDetail(tagName: tagName)));
-            },
-            child: Container(
-              height: 138,
-              width: 162,
-              margin: const EdgeInsets.all(8),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: const Color(0xFFE0E0E0),
-                  width: 1,
+    return RefreshIndicator(
+      color: Colors.grey,
+      backgroundColor: const Color(0xFFFFFFFF),
+      onRefresh: () async{
+        await fetchFunction();
+      },
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
+        child: GridView.builder(
+          controller: _scrollController,
+          itemCount: tags.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: MediaQuery.of(context).size.width ~/ 178),
+          itemBuilder: (BuildContext context, int index) {
+            return GestureDetector(
+              onTap: () {
+                String tagName = tags[index].tagId;
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => TagDetail(tagName: tagName)));
+              },
+              child: Container(
+                height: 138,
+                width: 162,
+                margin: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: const Color(0xFFE0E0E0),
+                    width: 1,
+                  ),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                children: [
-                  Image.network(
-                    tags[index].iconUrl,
-                    width: 38,
-                    errorBuilder: (c, o, s) {
-                      return const SizedBox(
-                        height: 38,
-                      );
-                    },
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Text(
-                    tags[index].tagId,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      color: Colors.black,
+                child: Column(
+                  children: [
+                    Image.network(
+                      tags[index].iconUrl,
+                      width: 38,
+                      errorBuilder: (c, o, s) {
+                        return const SizedBox(
+                          height: 38,
+                        );
+                      },
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '投稿件数：${tags[index].itemsCount}',
-                    style:
-                        const TextStyle(fontSize: 12, color: Color(0xFF828282)),
-                  ),
-                  Text(
-                    'フォロワー数：${tags[index].followersCount}',
-                    style:
-                        const TextStyle(fontSize: 12, color: Color(0xFF828282)),
-                  ),
-                ],
+                    const SizedBox(
+                      height: 8,
+                    ),
+                    Text(
+                      tags[index].tagId,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      '投稿件数：${tags[index].itemsCount}',
+                      style:
+                          const TextStyle(fontSize: 12, color: Color(0xFF828282)),
+                    ),
+                    Text(
+                      'フォロワー数：${tags[index].followersCount}',
+                      style:
+                          const TextStyle(fontSize: 12, color: Color(0xFF828282)),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

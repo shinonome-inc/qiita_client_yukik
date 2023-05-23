@@ -75,73 +75,81 @@ class _FeedPageState extends State<FeedPage> {
   }
 
   Widget _listView(List<Article> items) {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: _isLoading ? items.length + 1 : items.length,
-      itemBuilder: (context, index) {
-        if (index == items.length) {
-          return _loadingView();
-        }
-        return ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            elevation: MaterialStateProperty.all(0),
-          ),
-          onPressed: () {
-            showModalBottomSheet<void>(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                isScrollControlled: true,
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      )),
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: FeedDetail(url: items[index].webUrl));
-                });
-          },
-          child: Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(items[index].users.imgUrl),
-                radius: 20,
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      items[index].title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      '@${items[index].users.userId.toString()}'
-                      ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                      ' いいね:${items[index].likes.toString()}',
-                      style: const TextStyle(
-                          fontSize: 12, color: Color(0xFF828282)),
-                    ),
-                    const Divider(height: 16),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
+    return RefreshIndicator(
+      color: Colors.grey,
+      backgroundColor: const Color(0xFFFFFFFF),
+      onRefresh: () async{
+        await fetchFunction();
       },
+      child: ListView.builder(
+        controller: _scrollController,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        itemCount: _isLoading ? items.length + 1 : items.length,
+        itemBuilder: (context, index) {
+          if (index == items.length) {
+            return _loadingView();
+          }
+          return ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              elevation: MaterialStateProperty.all(0),
+            ),
+            onPressed: () {
+              showModalBottomSheet<void>(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        )),
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: FeedDetail(url: items[index].webUrl));
+                  });
+            },
+            child: Row(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(items[index].users.imgUrl),
+                  radius: 20,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        items[index].title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '@${items[index].users.userId.toString()}'
+                        ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                        ' いいね:${items[index].likes.toString()}',
+                        style: const TextStyle(
+                            fontSize: 12, color: Color(0xFF828282)),
+                      ),
+                      const Divider(height: 16),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -152,6 +160,10 @@ class _FeedPageState extends State<FeedPage> {
       decoration: InputDecoration(
         hintText: 'Search',
         prefixIcon: const Icon(Icons.search),
+        suffixIcon: IconButton(
+          onPressed: () => textController.clear(), //リセット処理
+          icon: const Icon(Icons.clear),
+        ),
         isDense: true,
         contentPadding: const EdgeInsets.fromLTRB(10, 12, 12, 10),
         hintStyle: const TextStyle(
@@ -200,10 +212,10 @@ class _FeedPageState extends State<FeedPage> {
   Widget _emptyView() {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 3,
-      child: Column(
+      child: const Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: const [
+          children: [
             Text(
               '検索にマッチする記事はありませんでした',
               style: TextStyle(
@@ -242,32 +254,35 @@ class _FeedPageState extends State<FeedPage> {
                     MaterialPageRoute(
                         builder: (context) => const Root(page_index: 0)));
               })
-            : Column(
-                children: [
-                  Container(
-                    color: Colors.white,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 10),
-                      child: _textField(),
-                    ),
+            :GestureDetector(
+                onTap: () => WidgetsBinding.instance.focusManager.primaryFocus?.unfocus(),
+                child: Column(
+                    children: [
+                      Container(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 10),
+                          child: _textField()),
+                      ),
+                      const Divider(height: 0.5),
+                      SizedBox(
+                        height: 8,
+                        child: Container(
+                          color: Colors.white,
+                        ),
+                      ),
+                      Expanded(
+                        child: Center(
+                            child: _isEmpty
+                                ? _emptyView()
+                                : _isLoading && _pageNumbers == 1
+                                    ? _loadingView()
+                                    : _listView(_fetchedArticles)),
+                      )
+                    ],
                   ),
-                  const Divider(height: 0.5),
-                  SizedBox(
-                    height: 8,
-                    child: Container(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Expanded(
-                    child: Center(
-                        child: _isEmpty
-                            ? _emptyView()
-                            : _isLoading && _pageNumbers == 1
-                                ? _loadingView()
-                                : _listView(_fetchedArticles)),
-                  )
-                ],
-              ));
+              ),
+            );
   }
 }
