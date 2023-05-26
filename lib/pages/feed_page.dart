@@ -196,7 +196,7 @@ class _FeedPageState extends State<FeedPage> {
         setState(() {
           onFieldSubmittedText = value;
           _fetchedArticles.clear();
-          _pageNumbers = 1;
+          _pageNumbers = 0;
           _isEmpty = false;
         });
         await fetchFunction();
