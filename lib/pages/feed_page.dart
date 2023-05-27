@@ -212,10 +212,10 @@ class _FeedPageState extends State<FeedPage> {
   Widget _emptyView() {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 3,
-      child: const Column(
+      child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+          children: const [
             Text(
               '検索にマッチする記事はありませんでした',
               style: TextStyle(
