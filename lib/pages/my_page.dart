@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:qiita_client_yukik/models/user.dart';
 import 'package:qiita_client_yukik/models/users_article.dart';
@@ -103,67 +104,74 @@ class _MyPageState extends State<MyPage> {
   }
 
   Widget _listView(List<dynamic> items) {
-    return ListView.builder(
-      controller: scrollController,
-      scrollDirection: Axis.vertical,
-      itemCount: isLoading ? items.length + 1 : items.length,
-      itemBuilder: (context, index) {
-        if (index == items.length) {
-          return _loadingView();
-        }
-        return ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            elevation: MaterialStateProperty.all(0),
-          ),
-          onPressed: () {
-            showModalBottomSheet<void>(
-                isScrollControlled: true,
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      )),
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: FeedDetail(url: items[index].webUrl));
-                });
-          },
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        items[index].title,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '@${authenticatedUser.userId}'
-                        ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                        ' いいね:${items[index].likes.toString()}',
-                        style: const TextStyle(
-                            fontSize: 12, color: Color(0xFF828282)),
-                      ),
-                      const Divider(height: 16),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+    return RefreshIndicator(
+      color: Colors.grey,
+      backgroundColor: const Color(0xFFFFFFFF),
+      onRefresh: () async{
+        await fetchFunction();
       },
+      child: ListView.builder(
+        controller: scrollController,
+        scrollDirection: Axis.vertical,
+        itemCount: isLoading ? items.length + 1 : items.length,
+        itemBuilder: (context, index) {
+          if (index == items.length) {
+            return _loadingView();
+          }
+          return ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              elevation: MaterialStateProperty.all(0),
+            ),
+            onPressed: () {
+              showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        )),
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: FeedDetail(url: items[index].webUrl));
+                  });
+            },
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 8, 0, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          items[index].title,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                          ),
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '@${authenticatedUser.userId}'
+                          ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                          ' いいね:${items[index].likes.toString()}',
+                          style: const TextStyle(
+                              fontSize: 12, color: Color(0xFF828282)),
+                        ),
+                        const Divider(height: 16),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 
