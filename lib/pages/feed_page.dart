@@ -244,45 +244,48 @@ class _FeedPageState extends State<FeedPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: const AppBarComponent(title: 'Feed'),
-        body: hasError
-            ? ErrorPage(onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const Root(page_index: 0)));
-              })
-            :GestureDetector(
-                onTap: () => WidgetsBinding.instance.focusManager.primaryFocus?.unfocus(),
-                child: Column(
-                    children: [
-                      Container(
-                        color: Colors.white,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 10),
-                          child: _textField()),
-                      ),
-                      const Divider(height: 0.5),
-                      SizedBox(
-                        height: 8,
-                        child: Container(
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: const AppBarComponent(title: 'Feed'),
+          body: hasError
+              ? ErrorPage(onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const Root(page_index: 0)));
+                })
+              :GestureDetector(
+                  onTap: () => WidgetsBinding.instance.focusManager.primaryFocus?.unfocus(),
+                  child: Column(
+                      children: [
+                        Container(
                           color: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            child: _textField()),
                         ),
-                      ),
-                      Expanded(
-                        child: Center(
-                            child: _isEmpty
-                                ? _emptyView()
-                                : _isLoading && _pageNumbers == 1
-                                    ? _loadingView()
-                                    : _listView(_fetchedArticles)),
-                      )
-                    ],
-                  ),
+                        const Divider(height: 0.5),
+                        SizedBox(
+                          height: 8,
+                          child: Container(
+                            color: Colors.white,
+                          ),
+                        ),
+                        Expanded(
+                          child: Center(
+                              child: _isEmpty
+                                  ? _emptyView()
+                                  : _isLoading && _pageNumbers == 1
+                                      ? _loadingView()
+                                      : _listView(_fetchedArticles)),
+                        )
+                      ],
+                    ),
+                ),
               ),
-            );
+    );
   }
 }

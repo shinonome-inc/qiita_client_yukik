@@ -40,7 +40,7 @@ class _LogInPageState extends State<LogInPage> {
             if (hasCode) {
               await _login(url);
               if (!mounted) return;
-              Navigator.push(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) => const Root(page_index: 0)),

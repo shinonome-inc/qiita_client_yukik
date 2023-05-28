@@ -186,97 +186,100 @@ class _MyPageState extends State<MyPage> {
   @override
   Widget build(BuildContext context) {
     return fetchedAuthenticatedUser
-        ? Scaffold(
-            backgroundColor: Colors.white,
-            appBar: const AppBarComponent(title: 'MyPage'),
-            body: hasError
-                ? ErrorPage(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const Root(page_index: 2)));
-                    },
-                  )
-                : Column(
-                    children: [
-                      const Divider(height: 0.5),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 23, 24, 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(authenticatedUser.imgUrl),
-                                radius: 40,
-                              ),
-                              const SizedBox(height: 16),
-                              Text(
-                                authenticatedUser.name,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+        ? WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+              backgroundColor: Colors.white,
+              appBar: const AppBarComponent(title: 'MyPage'),
+              body: hasError
+                  ? ErrorPage(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const Root(page_index: 2)));
+                      },
+                    )
+                  : Column(
+                      children: [
+                        const Divider(height: 0.5),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(24, 23, 24, 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(authenticatedUser.imgUrl),
+                                  radius: 40,
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                '@${authenticatedUser.userId}',
-                                style: const TextStyle(
-                                    color: Color(0xFF828282), fontSize: 12),
-                              ),
-                              const SizedBox(
-                                height: 16,
-                              ),
-                              Text(
-                                authenticatedUser.description,
-                                style: const TextStyle(
-                                    color: Color(0xFF828282), fontSize: 12),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  FollowCounts(
-                                    count: authenticatedUser.followees,
-                                    isFollowers: false,
+                                const SizedBox(height: 16),
+                                Text(
+                                  authenticatedUser.name,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
                                   ),
-                                  FollowCounts(
-                                    count: authenticatedUser.followers,
-                                    isFollowers: true,
-                                  ),
-                                ],
-                              ),
-                            ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '@${authenticatedUser.userId}',
+                                  style: const TextStyle(
+                                      color: Color(0xFF828282), fontSize: 12),
+                                ),
+                                const SizedBox(
+                                  height: 16,
+                                ),
+                                Text(
+                                  authenticatedUser.description,
+                                  style: const TextStyle(
+                                      color: Color(0xFF828282), fontSize: 12),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  children: [
+                                    FollowCounts(
+                                      count: authenticatedUser.followees,
+                                      isFollowers: false,
+                                    ),
+                                    FollowCounts(
+                                      count: authenticatedUser.followers,
+                                      isFollowers: true,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        height: 28,
-                        width: MediaQuery.of(context).size.width,
-                        color: const Color(0xFFF2F2F2),
-                        child: const Text(
-                          '    投稿記事',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Color(0xff828282),
+                        Container(
+                          height: 28,
+                          width: MediaQuery.of(context).size.width,
+                          color: const Color(0xFFF2F2F2),
+                          child: const Text(
+                            '    投稿記事',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Color(0xff828282),
+                            ),
                           ),
                         ),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: fetchedUsersArticles.isEmpty
-                              ? Container(
-                                  color: Colors.white,
-                                )
-                              : isLoading && pageNumbers == 1
-                                  ? _loadingView()
-                                  : _listView(fetchedUsersArticles),
+                        Expanded(
+                          child: Center(
+                            child: fetchedUsersArticles.isEmpty
+                                ? Container(
+                                    color: Colors.white,
+                                  )
+                                : isLoading && pageNumbers == 1
+                                    ? _loadingView()
+                                    : _listView(fetchedUsersArticles),
+                          ),
                         ),
-                      ),
-                    ],
-                  ))
+                      ],
+                    )),
+        )
         : isLoading
             ? _loadingView()
             : const MyPageNotLogin();
