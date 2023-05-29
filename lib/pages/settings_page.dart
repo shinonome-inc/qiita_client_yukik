@@ -48,107 +48,104 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-        backgroundColor: const Color(0xffFAFAFA),
-        appBar: const AppBarComponent(title: 'Settings'),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Divider(height: 0.5),
-            SizedBox(
-              height: 32,
-              child: Container(
-                color: const Color(0xffFAFAFA),
+    return Scaffold(
+      backgroundColor: const Color(0xffFAFAFA),
+      appBar: const AppBarComponent(title: 'Settings', leading: false,),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Divider(height: 0.5),
+          SizedBox(
+            height: 32,
+            child: Container(
+              color: const Color(0xffFAFAFA),
+            ),
+          ),
+          const Text(
+            '　アプリ情報',
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: Color(0xff828282),
+            ),
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          SettingsItem(
+              title: 'プライバシーポリシー',
+              data: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
               ),
-            ),
-            const Text(
-              '　アプリ情報',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xff828282),
-              ),
-            ),
-            const SizedBox(
-              height: 8,
-            ),
-            SettingsItem(
-                title: 'プライバシーポリシー',
-                data: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                ),
-                onTap: () {
-                  showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return SettingsModal(
-                            title: 'プライバシーポリシー',
-                            sentence: PrivacyPolicy().privacyText);
-                      });
-                }),
-            SettingsItem(
-                title: '利用規約',
-                data: const Icon(
-                  Icons.arrow_forward_ios,
-                  size: 16,
-                ),
-                onTap: () {
-                  showModalBottomSheet(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      isScrollControlled: true,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return SettingsModal(
-                            title: '利用規約', sentence: TermsOfService().termsText);
-                      });
-                }),
-            SettingsItem(
-              title: 'アプリバージョン',
-              data: Text('v$version'),
-            ),
-            const SizedBox(
-              height: 36,
-            ),
-            if (accessTokenIsSaved)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                    '　その他',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Color(0xff828282),
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  SettingsItem(
-                    title: 'ログアウトする',
-                    onTap: () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.remove('token');
-                      if (!mounted) return;
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const TopPage()),
-                      );
-                    },
-                  )
-                ],
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SettingsModal(
+                          title: 'プライバシーポリシー',
+                          sentence: PrivacyPolicy().privacyText);
+                    });
+              }),
+          SettingsItem(
+              title: '利用規約',
+              data: const Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
               ),
-          ],
-        ),
+              onTap: () {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return SettingsModal(
+                          title: '利用規約', sentence: TermsOfService().termsText);
+                    });
+              }),
+          SettingsItem(
+            title: 'アプリバージョン',
+            data: Text('v$version'),
+          ),
+          const SizedBox(
+            height: 36,
+          ),
+          if (accessTokenIsSaved)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '　その他',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xff828282),
+                  ),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                SettingsItem(
+                  title: 'ログアウトする',
+                  onTap: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.remove('token');
+                    if (!mounted) return;
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const TopPage()),
+                    );
+                  },
+                )
+              ],
+            ),
+        ],
       ),
     );
   }

@@ -169,35 +169,32 @@ class _TagPageState extends State<TagPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async => false,
-      child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: const AppBarComponent(title: 'Tags'),
-          body: Column(
-            children: [
-              const Divider(height: 0.5),
-              const SizedBox(
-                height: 8,
-              ),
-              Expanded(
-                child: Center(
-                    child: hasError
-                        ? ErrorPage(
-                            onPressed: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          const Root(page_index: 1)));
-                            },
-                          )
-                        : _isLoading && _pageNumbers == 1
-                            ? _loadingView()
-                            : _listTag(_fetchedTags)),
-              )
-            ],
-          )),
-    );
+    return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: const AppBarComponent(title: 'Tags', leading: false,),
+        body: Column(
+          children: [
+            const Divider(height: 0.5),
+            const SizedBox(
+              height: 8,
+            ),
+            Expanded(
+              child: Center(
+                  child: hasError
+                      ? ErrorPage(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const Root(page_index: 1)));
+                          },
+                        )
+                      : _isLoading && _pageNumbers == 1
+                          ? _loadingView()
+                          : _listTag(_fetchedTags)),
+            )
+          ],
+        ));
   }
 }

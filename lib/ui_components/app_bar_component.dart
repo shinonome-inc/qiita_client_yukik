@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarComponent({Key? key, this.title}) : super(key: key);
+  const AppBarComponent({Key? key, this.title, this.leading}) : super(key: key);
   final String? title;
+  final bool? leading;
 
   @override
   Widget build(BuildContext context) {
@@ -16,6 +17,7 @@ class AppBarComponent extends StatelessWidget implements PreferredSizeWidget {
       centerTitle: true,
       backgroundColor: Colors.white,
       elevation: 0,
+      automaticallyImplyLeading: leading ?? true,
     );
   }
 
