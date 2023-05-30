@@ -225,7 +225,7 @@ class _MyPageState extends State<MyPage> {
                               ),
                               const SizedBox(height: 4),
                               authenticatedUser.name == ""
-                              ? const SizedBox(height: 0)
+                              ? const SizedBox.shrink()
                                   : Text(
                                 '@${authenticatedUser.userId}',
                                 style: const TextStyle(
