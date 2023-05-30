@@ -215,14 +215,18 @@ class _MyPageState extends State<MyPage> {
                               ),
                               const SizedBox(height: 16),
                               Text(
-                                authenticatedUser.name,
+                                authenticatedUser.name == ""
+                                    ? "@${authenticatedUser.userId}"
+                                : authenticatedUser.name,
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const SizedBox(height: 4),
-                              Text(
+                              authenticatedUser.name == ""
+                              ? const SizedBox(height: 0)
+                                  : Text(
                                 '@${authenticatedUser.userId}',
                                 style: const TextStyle(
                                     color: Color(0xFF828282), fontSize: 12),
