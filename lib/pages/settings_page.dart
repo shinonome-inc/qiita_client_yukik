@@ -50,7 +50,7 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xffFAFAFA),
-      appBar: const AppBarComponent(title: 'Settings'),
+      appBar: const AppBarComponent(title: 'Settings', leading: false,),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

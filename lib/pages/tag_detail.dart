@@ -68,81 +68,88 @@ class _TagDetailState extends State<TagDetail> {
   }
 
   Widget _listView(List<Article> items) {
-    return ListView.builder(
-      controller: _scrollController,
-      itemCount: _isLoading ? items.length + 1 : items.length,
-      itemBuilder: (context, index) {
-        if (index == items.length) {
-          return _loadingView();
-        }
-        return ElevatedButton(
-          style: ButtonStyle(
-            backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
-            elevation: MaterialStateProperty.all(0),
-          ),
-          onPressed: () {
-            showModalBottomSheet<void>(
-                isScrollControlled: true,
-                context: context,
-                builder: (BuildContext context) {
-                  return Container(
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10),
-                        topRight: Radius.circular(10),
-                      )),
-                      height: MediaQuery.of(context).size.height * 0.9,
-                      child: FeedDetail(url: items[index].webUrl));
-                });
-          },
-          child: Row(
-            children: [
-              SizedBox(
-                width: 38,
-                height: 38,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100),
-                  child: Image.network(
-                    items[index].users.imgUrl,
-                    errorBuilder: (c, o, s) {
-                      return const SizedBox(
-                        height: 38,
-                      );
-                    },
+    return RefreshIndicator(
+      color: Colors.grey,
+      backgroundColor: const Color(0xFFFFFFFF),
+      onRefresh: () async{
+        await fetchFunction();
+      },
+      child: ListView.builder(
+        controller: _scrollController,
+        itemCount: _isLoading ? items.length + 1 : items.length,
+        itemBuilder: (context, index) {
+          if (index == items.length) {
+            return _loadingView();
+          }
+          return ElevatedButton(
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.all<Color>(Colors.white),
+              elevation: MaterialStateProperty.all(0),
+            ),
+            onPressed: () {
+              showModalBottomSheet<void>(
+                  isScrollControlled: true,
+                  context: context,
+                  builder: (BuildContext context) {
+                    return Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          topRight: Radius.circular(10),
+                        )),
+                        height: MediaQuery.of(context).size.height * 0.9,
+                        child: FeedDetail(url: items[index].webUrl));
+                  });
+            },
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 38,
+                  height: 38,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: Image.network(
+                      items[index].users.imgUrl,
+                      errorBuilder: (c, o, s) {
+                        return const SizedBox(
+                          height: 38,
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      items[index].title,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      '@${items[index].users.userId.toString()}'
-                      ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
-                      ' いいね:${items[index].likes.toString()}',
-                      style: const TextStyle(
-                          fontSize: 12, color: Color(0xFF828282)),
-                    ),
-                    const Divider(height: 16),
-                  ],
+                const SizedBox(
+                  width: 8,
                 ),
-              ),
-            ],
-          ),
-        );
-      },
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        items[index].title,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        '@${items[index].users.userId.toString()}'
+                        ' 投稿日:${DateFormat('yyyy/MM/dd').format(items[index].createdAt)}'
+                        ' いいね:${items[index].likes.toString()}',
+                        style: const TextStyle(
+                            fontSize: 12, color: Color(0xFF828282)),
+                      ),
+                      const Divider(height: 16),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 

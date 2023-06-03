@@ -29,34 +29,37 @@ class _RootState extends State<Root> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: _screens[_selectedIndex ?? widget.page_index],
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        currentIndex: _selectedIndex ?? widget.page_index,
-        onTap: _onItemTapped,
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list_outlined),
-            label: 'フィード',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.label_outline),
-            label: 'タグ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'マイページ',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: '設定',
-          ),
-        ],
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.green,
-        unselectedFontSize: 10,
-        selectedFontSize: 10,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: _screens[_selectedIndex ?? widget.page_index],
+        bottomNavigationBar: BottomNavigationBar(
+          backgroundColor: Colors.white,
+          currentIndex: _selectedIndex ?? widget.page_index,
+          onTap: _onItemTapped,
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list_outlined),
+              label: 'フィード',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.label_outline),
+              label: 'タグ',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              label: 'マイページ',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings_outlined),
+              label: '設定',
+            ),
+          ],
+          type: BottomNavigationBarType.fixed,
+          selectedItemColor: Colors.green,
+          unselectedFontSize: 10,
+          selectedFontSize: 10,
+        ),
       ),
     );
   }
